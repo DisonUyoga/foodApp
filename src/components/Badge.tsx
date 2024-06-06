@@ -10,7 +10,7 @@ const Badge = ({ price }: BadgeProps) => {
   return (
     <View>
       <Text
-        className="w-1/2 inline-flex items-center rounded-md bg-secondary px-2 py-1 text-xs font-medium ring-1 ring-inset ring-gray-500/10 justify-center"
+        className="bg-secondary max-w-[100px] rounded items-center justify-center text-center px-2 mt-4"
         numberOfLines={1}
       >
         {priceTag(price)}
