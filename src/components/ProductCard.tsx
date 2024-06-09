@@ -1,10 +1,15 @@
 import { View, Text, Pressable } from "react-native";
-import React from "react";
+import React, { memo } from "react";
 import { OrderItem, Product } from "../type";
 import { Image } from "react-native";
 import Badge from "./Badge";
 import * as Animatable from "react-native-animatable";
-import { Link } from "expo-router";
+import { Link, useRouter, useSegments } from "expo-router";
+import Button from "./Button";
+import { addToCart } from "../app/features/slices/cartSlice";
+import { useDispatch } from "react-redux";
+import { toast } from "../utils/toast";
+import { useAppDispatch, useAppSelector } from "../utils/hooks";
 
 const zoomIn: any = {
   0: {
@@ -35,11 +40,23 @@ const ProductCard = ({
   containerStyle,
   animateItem,
 }: ProductProps) => {
-  console.log("jjj", animateItem);
+  const dispatch = useAppDispatch();
+  const { sizes: size } = useAppSelector((state) => state.cart);
+  const router = useRouter();
+  const segments = useSegments();
+  function addProductToCart(product: Product) {
+    if (!product) return;
+    dispatch(addToCart({ product, size }));
+
+    toast();
+
+    // router.push("/cart");
+  }
+  console.log(segments);
   return (
     <>
       {!animateItem ? (
-        <Link href={`/menu/${product?.id}`} asChild>
+        <Link href={`/${segments[0]}/menu/${product?.id}`} asChild>
           <Pressable
             className={` space-y-2  py-4 rounded-lg ${containerStyle}`}
           >
@@ -60,7 +77,7 @@ const ProductCard = ({
         </Link>
       ) : (
         <Animatable.View
-          className={`mt-7 space-y-2  py-4 rounded-lg ${containerStyle}`}
+          className={`w-48 space-y-2  py-4 rounded-lg ${containerStyle}`}
           animation={animateItem === product.id.toString() ? zoomIn : zoomOut}
           duration={10}
         >
@@ -68,7 +85,7 @@ const ProductCard = ({
             <Image
               source={{ uri: product?.image }}
               resizeMode="contain"
-              className={`aspect-square ${otherStyles}`}
+              className={` aspect-square ${otherStyles}`}
             />
           </View>
           <View className="bg-transparent w-full items-center justify-center">
@@ -76,6 +93,11 @@ const ProductCard = ({
               {product?.name}
             </Text>
             <Badge price={product?.price} />
+            <Button
+              text="Add to cart"
+              onPress={() => addProductToCart(product)}
+              otherStyles="bg-secondary mt-2 px-2 rounded text-xs py-2"
+            />
             <Link
               className="text-gray-100"
               href={`/menu/${product?.id}`}
@@ -90,4 +112,4 @@ const ProductCard = ({
   );
 };
 
-export default ProductCard;
+export default memo(ProductCard);

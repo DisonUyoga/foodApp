@@ -3,31 +3,43 @@ import { createSlice, configureStore, PayloadAction } from "@reduxjs/toolkit";
 
 export interface CartItems {
   id: number;
-  image: string | undefined;
+  image: string;
   name: string;
   price: number;
   quantity: number;
+  totalPrice: number;
+  size: string;
 }
+
 export interface CartProps {
   cartItems: CartItems[];
   totalAmount: number;
   totalQuantity: number;
+  sizes: string;
 }
-
+export interface CartProductProps {
+  product: Product;
+  size: string;
+}
 const initialState = {
   cartItems: [],
   totalAmount: 0,
   totalQuantity: 0,
+  sizes: "M",
 } as CartProps;
 
 const cartSlice = createSlice({
   name: "cart",
   initialState,
   reducers: {
-    addToCart(state: CartProps, action: PayloadAction<Product>) {
-      const product = action.payload;
+    addToCart(state: CartProps, action: PayloadAction<CartProductProps>) {
+      const { product, size } = action.payload;
       // check if product is in the cart
-      const item = state.cartItems.find((p) => p.id === product.id);
+      const item: CartItems | undefined = state.cartItems.find(
+        (p) => p.id === product.id
+      );
+      state.totalQuantity++;
+
       if (!item) {
         state.cartItems.push({
           id: product.id,
@@ -35,14 +47,14 @@ const cartSlice = createSlice({
           name: product.name,
           price: product.price,
           quantity: 1,
+          totalPrice: product.price,
+          size: size,
         });
       } else {
-        // if the product exists just increment the totalQuantity
-        state.totalQuantity++;
+        item.quantity++;
       }
-
       state.totalAmount = state.cartItems.reduce(
-        (acc, curr) => acc + curr.price * curr.quantity,
+        (total, item) => total + item.quantity * item.price,
         0
       );
     },
@@ -54,9 +66,58 @@ const cartSlice = createSlice({
         state.cartItems = state.cartItems.filter((i) => i.id !== product.id);
       }
     },
+    increaseQuantity(state: CartProps, action: PayloadAction<Product>) {
+      const product = action.payload;
+      // check if the item exists
+      const existingItem = state.cartItems.find((p) => p.id === product.id);
+
+      if (existingItem) {
+        existingItem.quantity++;
+        state.totalQuantity++;
+        state.totalAmount = state.totalAmount + existingItem.price;
+      }
+    },
+
+    decreaseQuantity(state: CartProps, action: PayloadAction<Product>) {
+      const product = action.payload;
+      // check if the item exists
+      const existingItem = state.cartItems.find((p) => p.id === product.id);
+      if (existingItem) {
+        if (existingItem.quantity > 0) {
+          existingItem.quantity--;
+          state.totalQuantity--;
+          state.totalAmount = state.totalAmount - existingItem.price;
+        }
+        if (existingItem.quantity === 0) {
+          state.cartItems = state.cartItems.filter(
+            (item) => item.id != existingItem.id
+          );
+        }
+      }
+    },
+    selectSize(
+      state: CartProps,
+      action: PayloadAction<{ size: string; product: Product }>
+    ) {
+      const { size, product } = action.payload;
+      state.sizes = size;
+      // check if the product exist
+      const existingItem = state.cartItems.find(
+        (item) => item.id === product.id
+      );
+      if (existingItem) {
+        existingItem.size = size;
+      }
+    },
   },
 });
 
-export const { addToCart, deleteProduct } = cartSlice.actions;
+export const {
+  addToCart,
+  deleteProduct,
+  increaseQuantity,
+  decreaseQuantity,
+  selectSize,
+} = cartSlice.actions;
 
 export default cartSlice.reducer;

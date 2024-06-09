@@ -12,6 +12,8 @@ import "react-native-reanimated";
 import { store } from "./features/store";
 import { Provider } from "react-redux";
 import { useColorScheme } from "@/src/components/useColorScheme";
+import { LogBox } from "react-native";
+import { RootSiblingParent } from "react-native-root-siblings";
 
 export {
   // Catch any errors thrown by the Layout component.
@@ -55,12 +57,17 @@ function RootLayoutNav() {
 
   return (
     <Provider store={store}>
-      <ThemeProvider value={colorScheme === "dark" ? DarkTheme : DefaultTheme}>
-        <Stack>
-          <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
-          <Stack.Screen name="cart" options={{ presentation: "modal" }} />
-        </Stack>
-      </ThemeProvider>
+      <RootSiblingParent>
+        <ThemeProvider
+          value={colorScheme === "dark" ? DarkTheme : DefaultTheme}
+        >
+          <Stack>
+            <Stack.Screen name="(user)" options={{ headerShown: false }} />
+            <Stack.Screen name="(admin)" options={{ headerShown: false }} />
+            <Stack.Screen name="cart" options={{ presentation: "modal" }} />
+          </Stack>
+        </ThemeProvider>
+      </RootSiblingParent>
     </Provider>
   );
 }

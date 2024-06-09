@@ -1,3 +1,4 @@
+export const sizes = ["S", "M", "L", "XL"];
 const products = [
   {
     id: 1,
