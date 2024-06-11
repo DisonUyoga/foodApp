@@ -12,6 +12,15 @@ const Root = () => {
   return (
     <Stack
       screenOptions={{
+        headerTintColor: "#fff",
+        headerStyle: {
+          backgroundColor: "#161622",
+        },
+
+        headerTitleStyle: {
+          color: "#ffff",
+          fontWeight: "300",
+        },
         headerRight: () => (
           <Link href="/cart" asChild>
             <Pressable>
@@ -20,7 +29,7 @@ const Root = () => {
                   <FontAwesome
                     name="shopping-cart"
                     size={25}
-                    color={Colors[colorScheme ?? "light"].text}
+                    color="#ffff"
                     style={{ marginRight: 15, opacity: pressed ? 0.5 : 1 }}
                   />
                   <Text style={styles.container}>{totalQuantity}</Text>

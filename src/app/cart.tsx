@@ -8,6 +8,7 @@ import CartListItem from "../components/CartListItem";
 import HeaderProducts from "../components/HeaderProducts";
 import NoItemInCart from "../components/NoItemInCart";
 import { useAppDispatch, useAppSelector } from "../utils/hooks";
+import { Stack } from "expo-router";
 
 const cart = () => {
   const { cartItems } = useAppSelector((state) => state.cart);
@@ -23,6 +24,7 @@ const cart = () => {
   }
   return (
     <SafeAreaView className="flex-1 px-4 bg-primary">
+      <Stack.Screen options={{ headerTintColor: "#fff" }} />
       <View>
         <FlatList
           data={cartItems}
@@ -31,13 +33,9 @@ const cart = () => {
           ListHeaderComponent={() => (
             <View>
               <View className="bg-transparent">
-                {continueShopping ? (
+                {continueShopping && (
                   <Text className="text-white text-xl text-center font-bold">
                     Explore Our Menu
-                  </Text>
-                ) : (
-                  <Text className="text-white text-xl text-center font-bold">
-                    Cart
                   </Text>
                 )}
                 {continueShopping ? (

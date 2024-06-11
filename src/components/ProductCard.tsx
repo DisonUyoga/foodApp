@@ -48,7 +48,7 @@ const ProductCard = ({
     if (!product) return;
     dispatch(addToCart({ product, size }));
 
-    toast();
+    toast("item added to cart", "green");
 
     // router.push("/cart");
   }

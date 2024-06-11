@@ -5,17 +5,21 @@ import SelectSize from "@/src/components/SelectSize";
 import { Product } from "@/src/type";
 import { useAppDispatch, useAppSelector } from "@/src/utils/hooks";
 import { priceTag } from "@/src/utils/priceTag";
-import { Stack, useLocalSearchParams, useRouter } from "expo-router";
+import { Link, Stack, useLocalSearchParams, useRouter } from "expo-router";
 import React, { useState } from "react";
-import { Image, Text, View } from "react-native";
+import { Image, Pressable, Text, View } from "react-native";
 import { toast } from "../../../utils/toast";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { addToCart, selectSize } from "../../features/slices/cartSlice";
 import CartDetails from "@/src/components/CartDetails";
 import { sizes } from "@/assets/data/products";
+import { FontAwesome } from "@expo/vector-icons";
+import Colors from "@/src/components/constants/Colors";
+import { useColorScheme } from "@/src/components/useColorScheme";
 
 const ProductDetail = () => {
   const { id, update } = useLocalSearchParams();
+  const colorScheme = useColorScheme();
   const product = products.find((p) => p.id.toString() === id);
 
   const dispatch = useAppDispatch();
@@ -43,7 +47,7 @@ const ProductDetail = () => {
     if (!product) return;
     dispatch(addToCart({ product, size: selected }));
 
-    toast();
+    toast("item added to cart", "green");
 
     router.push("/cart");
   }
@@ -54,6 +58,31 @@ const ProductDetail = () => {
         <Stack.Screen
           options={{
             title: `${product.name}`,
+            headerTintColor: "#fff",
+            headerStyle: {
+              backgroundColor: "#161622",
+            },
+            headerTitleStyle: {
+              color: "#ffff",
+              fontWeight: "300",
+            },
+
+            headerRight: () => (
+              <Link href={`/admin/menu/create/?id=${id}`} asChild>
+                <Pressable>
+                  {({ pressed }) => (
+                    <View className="relative">
+                      <FontAwesome
+                        name="pencil"
+                        size={25}
+                        color={Colors[colorScheme ?? "light"].text}
+                        style={{ marginRight: 15, opacity: pressed ? 0.5 : 1 }}
+                      />
+                    </View>
+                  )}
+                </Pressable>
+              </Link>
+            ),
           }}
         />
         <Image

@@ -9,7 +9,7 @@ import {
 import React from "react";
 import Colors from "./constants/Colors";
 // import { CartItem } from "../types";
-import { Link } from "expo-router";
+import { Link, useSegments } from "expo-router";
 // import { defaultPizzaImage } from "../../../constants/Images";
 import { FontAwesome } from "@expo/vector-icons";
 import { useAppDispatch, useAppSelector } from "../utils/hooks";
@@ -19,10 +19,14 @@ import {
   decreaseQuantity,
 } from "../app/features/slices/cartSlice";
 import { priceTag } from "../utils/priceTag";
-
-const CartListItem = ({ cartItem }: { cartItem: CartItems }) => {
+interface CartListItemProps {
+  cartItem: CartItems;
+}
+const CartListItem = ({ cartItem }: CartListItemProps) => {
   const { totalQuantity } = useAppSelector((state) => state.cart);
   const dispatch = useAppDispatch();
+  const segments = useSegments();
+  console.log(segments);
 
   return (
     <Pressable style={styles.container}>
@@ -63,7 +67,7 @@ const CartListItem = ({ cartItem }: { cartItem: CartItems }) => {
           <Link
             style={{ color: Colors.light.tint }}
             className="text-xs"
-            href={`/menu/${cartItem.id}?update=${true}`}
+            href={`/user/menu/${cartItem.id}?update=${true}`}
           >
             Update Size
           </Link>

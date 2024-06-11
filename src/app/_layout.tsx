@@ -61,10 +61,22 @@ function RootLayoutNav() {
         <ThemeProvider
           value={colorScheme === "dark" ? DarkTheme : DefaultTheme}
         >
-          <Stack>
-            <Stack.Screen name="(user)" options={{ headerShown: false }} />
-            <Stack.Screen name="(admin)" options={{ headerShown: false }} />
-            <Stack.Screen name="cart" options={{ presentation: "modal" }} />
+          <Stack
+            screenOptions={{
+              headerShown: false,
+              headerStyle: {
+                backgroundColor: "#161622",
+              },
+              headerTintColor: "#fff",
+              headerTitleStyle: {
+                color: "#ffff",
+                fontWeight: "300",
+              },
+            }}
+          >
+            <Stack.Screen name="user" />
+            <Stack.Screen name="admin" />
+            <Stack.Screen name="cart" />
           </Stack>
         </ThemeProvider>
       </RootSiblingParent>

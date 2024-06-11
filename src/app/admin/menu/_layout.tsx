@@ -10,42 +10,32 @@ const Root = () => {
   const colorScheme = useColorScheme();
   const { totalQuantity } = useAppSelector((state) => state.cart);
   return (
-    <Stack screenOptions={{}}>
+    <Stack
+      screenOptions={{
+        headerStyle: {
+          backgroundColor: "#161622",
+        },
+        headerTitleStyle: {
+          color: "#ffff",
+          fontWeight: "300",
+        },
+        headerTintColor: "#fff",
+      }}
+    >
       <Stack.Screen
         name="index"
         options={{
           title: "Menu",
+
           headerRight: () => (
-            <Link href="/cart" asChild>
+            <Link href="/admin/menu/create" asChild>
               <Pressable>
                 {({ pressed }) => (
                   <View className="relative">
                     <FontAwesome
                       name="plus-square-o"
                       size={25}
-                      color={Colors[colorScheme ?? "light"].text}
-                      style={{ marginRight: 15, opacity: pressed ? 0.5 : 1 }}
-                    />
-                  </View>
-                )}
-              </Pressable>
-            </Link>
-          ),
-        }}
-      />
-      <Stack.Screen
-        name="[id]"
-        options={{
-          title: "Menu",
-          headerRight: () => (
-            <Link href="/cart" asChild>
-              <Pressable>
-                {({ pressed }) => (
-                  <View className="relative">
-                    <FontAwesome
-                      name="pencil"
-                      size={25}
-                      color={Colors[colorScheme ?? "light"].text}
+                      color={"#fff"}
                       style={{ marginRight: 15, opacity: pressed ? 0.5 : 1 }}
                     />
                   </View>

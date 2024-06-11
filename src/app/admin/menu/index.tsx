@@ -8,13 +8,14 @@ import products from "@/assets/data/products";
 import ProductCard from "@/components/ProductCard";
 import { Product } from "@/src/type";
 import ProductsOnOffer from "@/src/components/HeaderProducts";
+import { Stack } from "expo-router";
 const product = products[0];
 const productOnOffer = products.slice(0, 5);
-
 
 export default function TabOneScreen() {
   return (
     <SafeAreaView className="bg-primary flex-1 ">
+     
       <View className="items-center justify-center bg-transparent">
         <FlatList
           data={products}

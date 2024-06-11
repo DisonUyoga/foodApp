@@ -28,7 +28,6 @@ const ProductDetail = () => {
   const cartItems = useAppSelector((state) => state.cart.cartItems);
   const cartItem = cartItems.find((p) => p.id === product?.id);
   const handleSelected = (size: string) => {
-   
     if (!product) return;
     dispatch(selectSize({ size, product }));
     updateSize();
@@ -44,7 +43,7 @@ const ProductDetail = () => {
     if (!product) return;
     dispatch(addToCart({ product, size: selected }));
 
-    toast();
+    toast("item added to cart", "green");
 
     router.push("/cart");
   }

@@ -1,3 +1,5 @@
+import { ImagePickerAsset } from "expo-image-picker";
+import { FormikState } from "formik";
 export type Product = {
   id: number;
   image: string;
@@ -47,3 +49,25 @@ export type Profile = {
   id: string;
   group: string;
 };
+
+interface CreateType {
+  name: string | null;
+  imageUrl: ImagePickerAsset | null | undefined;
+  price: number | null;
+}
+interface ResetFormType {
+  resetForm: (nextState?: Partial<FormikState<any>> | undefined) => void;
+}
+declare module "yup" {
+  interface StringSchema<TType, TContext, TDefault, TFlags> {
+    append(appendStr: string): this;
+  }
+}
+export interface UserType {
+  username?: string;
+  password: string;
+  email?: string;
+}
+export interface ResetFormType {
+  resetForm: (nextState?: Partial<FormikState<UserType>> | undefined) => void;
+}
