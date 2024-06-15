@@ -1,11 +1,14 @@
 import { ImagePickerAsset } from "expo-image-picker";
 import { FormikState } from "formik";
-export type Product = {
-  id: number;
-  image: string;
-  name: string;
-  price: number;
-};
+import { Database } from "./database.types";
+export type Tables<T extends keyof Database["public"]["Tables"]> =
+  Database["public"]["Tables"][T]["Row"];
+export type InsertTables<T extends keyof Database["public"]["Tables"]> =
+  Database["public"]["Tables"][T]["Insert"];
+export type UpdateTables<T extends keyof Database["public"]["Tables"]> =
+  Database["public"]["Tables"][T]["Update"];
+export type Enums<T extends keyof Database["public"]["Enums"]> =
+  Databse["public"]["Enums"][T];
 
 export type PizzaSize = "S" | "M" | "L" | "XL";
 
@@ -24,7 +27,7 @@ export const OrderStatusList: OrderStatus[] = [
   "Delivered",
 ];
 
-export type OrderStatus = "New" | "Cooking" | "Delivering" | "Delivered";
+export type OrderStatus = "New" | "COOKING" | "DELIVERING" | "DELIVERED";
 
 export type Order = {
   id: number;
@@ -51,8 +54,14 @@ export type Profile = {
 };
 
 interface CreateType {
-  name: string | null;
-  imageUrl: ImagePickerAsset | null | undefined;
+  name: string;
+  image: string | null;
+  price: number | null;
+}
+interface UpdateType {
+  id: string;
+  name: string;
+  image: string | null;
   price: number | null;
 }
 interface ResetFormType {
@@ -64,7 +73,7 @@ declare module "yup" {
   }
 }
 export interface UserType {
-  username?: string;
+  phone?: string;
   password: string;
   email?: string;
 }

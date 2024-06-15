@@ -5,15 +5,20 @@ import {
   ThemeProvider,
 } from "@react-navigation/native";
 import { useFonts } from "expo-font";
-import { Stack } from "expo-router";
+import { Redirect, Stack } from "expo-router";
 import * as SplashScreen from "expo-splash-screen";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import "react-native-reanimated";
 import { store } from "./features/store";
 import { Provider } from "react-redux";
 import { useColorScheme } from "@/src/components/useColorScheme";
 import { LogBox } from "react-native";
 import { RootSiblingParent } from "react-native-root-siblings";
+import { supabase } from "../lib/supabase";
+import { useAppDispatch } from "../utils/hooks";
+import { processingAuth, sessionToken } from "./features/slices/AuthSlice";
+import QueryProvider from "../lib/QueryProvider";
+import { StatusBar } from "expo-status-bar";
 
 export {
   // Catch any errors thrown by the Layout component.
@@ -54,32 +59,59 @@ export default function RootLayout() {
 
 function RootLayoutNav() {
   const colorScheme = useColorScheme();
+  const [loading, setLoading] = useState(false);
+
+  useEffect(() => {
+    const fetchSession = async () => {
+      store.dispatch(processingAuth({ authLoading: true }));
+      const { data, error } = await supabase.auth.getSession();
+      try {
+        if (data.session?.access_token) {
+          store.dispatch(sessionToken({ session: data.session }));
+        } else {
+          <Redirect href={"/sign-in"} />;
+        }
+      } catch (error) {
+        
+      } finally {
+        store.dispatch(processingAuth({ authLoading: false }));
+      }
+      
+    };
+    fetchSession();
+    supabase.auth.onAuthStateChange((_event, session) => {
+      store.dispatch(sessionToken({ session: session }));
+    });
+  }, []);
 
   return (
     <Provider store={store}>
       <RootSiblingParent>
-        <ThemeProvider
-          value={colorScheme === "dark" ? DarkTheme : DefaultTheme}
-        >
-          <Stack
-            screenOptions={{
-              headerShown: false,
-              headerStyle: {
-                backgroundColor: "#161622",
-              },
-              headerTintColor: "#fff",
-              headerTitleStyle: {
-                color: "#ffff",
-                fontWeight: "300",
-              },
-            }}
+        <QueryProvider>
+          <ThemeProvider
+            value={colorScheme === "dark" ? DarkTheme : DefaultTheme}
           >
-            <Stack.Screen name="user" />
-            <Stack.Screen name="admin" />
-            <Stack.Screen name="cart" />
-          </Stack>
-        </ThemeProvider>
+            <Stack
+              screenOptions={{
+                headerStyle: {
+                  backgroundColor: "#161622",
+                },
+                headerTintColor: "#fff",
+                headerTitleStyle: {
+                  color: "#ffff",
+                  fontWeight: "300",
+                },
+              }}
+            >
+              <Stack.Screen name="user" options={{ headerShown: false }} />
+              <Stack.Screen name="admin" options={{ headerShown: false }} />
+              <Stack.Screen name="cart" />
+              <Stack.Screen name="(auth)" options={{ headerShown: false }} />
+            </Stack>
+          </ThemeProvider>
+        </QueryProvider>
       </RootSiblingParent>
+      <StatusBar backgroundColor="#161622" style="light" />
     </Provider>
   );
 }

@@ -1,6 +1,5 @@
-import { TouchableOpacity, Text, View } from "react-native";
 import React from "react";
-import { TabBarIcon } from "../app/(tabs)/_layout";
+import { Text, TouchableOpacity, View } from "react-native";
 
 interface ButtonProps {
   otherStyles?: string;

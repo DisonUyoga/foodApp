@@ -1,12 +1,13 @@
 import React from "react";
 import FontAwesome from "@expo/vector-icons/FontAwesome";
-import { Link, Tabs } from "expo-router";
+import { Link, Redirect, Tabs } from "expo-router";
 import { Pressable } from "react-native";
 
 import Colors from "@/src/components/constants/Colors";
 import { useColorScheme } from "@/src/components/useColorScheme";
 import { useClientOnlyValue } from "@/src/components/useClientOnlyValue";
 import { StatusBar } from "expo-status-bar";
+import { useAppSelector } from "@/src/utils/hooks";
 
 // You can explore the built-in icon families and icons on the web at https://icons.expo.fyi/
 export function TabBarIcon(props: {
@@ -18,6 +19,10 @@ export function TabBarIcon(props: {
 
 export default function TabLayout() {
   const colorScheme = useColorScheme();
+  const { isAdmin } = useAppSelector((state) => state.auth);
+  if (!isAdmin) {
+    return <Redirect href="/" />;
+  }
 
   return (
     <>
@@ -55,6 +60,14 @@ export default function TabLayout() {
             title: "Orders",
             headerShown: false,
             tabBarIcon: ({ color }) => <TabBarIcon name="list" color={color} />,
+          }}
+        />
+        <Tabs.Screen
+          name="profile"
+          options={{
+            title: "Profile",
+
+            tabBarIcon: ({ color }) => <TabBarIcon name="user" color={color} />,
           }}
         />
       </Tabs>

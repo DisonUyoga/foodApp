@@ -2,14 +2,14 @@ import {
   View,
   Text,
   StyleSheet,
-  Image,
   Pressable,
   TouchableOpacity,
 } from "react-native";
 import React from "react";
 import Colors from "./constants/Colors";
+import { Image } from "expo-image";
 // import { CartItem } from "../types";
-import { Link, useSegments } from "expo-router";
+import { Link, Stack, useSegments } from "expo-router";
 // import { defaultPizzaImage } from "../../../constants/Images";
 import { FontAwesome } from "@expo/vector-icons";
 import { useAppDispatch, useAppSelector } from "../utils/hooks";
@@ -19,6 +19,11 @@ import {
   decreaseQuantity,
 } from "../app/features/slices/cartSlice";
 import { priceTag } from "../utils/priceTag";
+import products from "@/assets/data/products";
+import { blurhash } from "@/assets/data/products";
+import ProductDetailImage from "./ProductDetailImage";
+import RemoteImage from "./RemoteImage";
+import CartImage from "./CartImage";
 interface CartListItemProps {
   cartItem: CartItems;
 }
@@ -26,15 +31,19 @@ const CartListItem = ({ cartItem }: CartListItemProps) => {
   const { totalQuantity } = useAppSelector((state) => state.cart);
   const dispatch = useAppDispatch();
   const segments = useSegments();
-  console.log(segments);
-
+  console.log(cartItem.image);
   return (
     <Pressable style={styles.container}>
-      <Image
-        source={{ uri: cartItem.image }}
+      <Stack.Screen options={{ headerTintColor: "#fff" }} />
+      {/* <Image
         style={styles.image}
-        resizeMode="contain"
-      />
+        source={cartItem.image ?? products[0].image}
+        placeholder={{ blurhash }}
+        contentFit="contain"
+        transition={1000}
+      /> */}
+      <CartImage fallback={products[0].image} path={cartItem.image as string} />
+
       <View style={{ flex: 1 }}>
         <Text style={styles.title}>{cartItem.name}</Text>
         <View style={styles.subtitleContainer}>

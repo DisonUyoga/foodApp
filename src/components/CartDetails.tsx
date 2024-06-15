@@ -27,7 +27,7 @@ const CartDetails = ({
       {quantity && (
         <Text className={`${textStyles}`}>Quantity: {quantity}</Text>
       )}
-      {totalItems && (
+      {totalItems! > 0 && (
         <Text className={`${textStyles}`}>Cart Total: {totalItems}</Text>
       )}
 

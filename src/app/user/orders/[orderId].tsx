@@ -1,34 +1,52 @@
-import { View, Text, FlatList } from "react-native";
-import React from "react";
-import { Stack, useLocalSearchParams } from "expo-router";
-import orders from "@/assets/data/orders";
-import { Order, OrderItem } from "@/src/type";
-import { SafeAreaView } from "react-native-safe-area-context";
+import GrowingLoader from "@/src/components/GrowingLoader";
+import Loading from "@/src/components/Loading";
 import OrderDetails from "@/src/components/OrderDetails";
 import OrderListItem from "@/src/components/OrderItem";
+import { Tables } from "@/src/database.types";
+import { useOrderDetails } from "@/src/lib/query";
+import {
+  useSubscription,
+  useUpdateSubscription,
+} from "@/src/utils/useSubscriptions";
+import { Stack, useLocalSearchParams } from "expo-router";
+import React from "react";
+import { ActivityIndicator, Alert, FlatList, Text, View } from "react-native";
+import { SafeAreaView } from "react-native-safe-area-context";
 
 interface OrderDetailProps {
-  orderItem: Order;
+  orderItem: Tables<"orders">;
 }
 const OrderDetail = () => {
   const { orderId } = useLocalSearchParams()!;
-  const order = orders.find((item) => item.id.toString() === orderId);
-  console.log(order);
-  if (!order)
-    return <Text className="text-gray-100 text-center">Item not found</Text>;
+  const { data: order, error, isLoading } = useOrderDetails(orderId as string);
+  useUpdateSubscription(orderId as string);
+
+  if (isLoading) {
+    return (
+      <View className="items-center justify-center bg-black-200 flex-1">
+        <GrowingLoader />
+      </View>
+    );
+  }
+  if (error) {
+    return Alert.alert("Error Fetching Order Detail", error.message);
+  }
+
   return (
     <SafeAreaView className="bg-primary px-4 flex-1">
       <Stack.Screen options={{ title: `#${orderId}` }} />
       <View className="mb-2">
         <Text className="text-white mb-2">Order Item</Text>
-        <OrderListItem order={order} />
+        {order && <OrderListItem order={order} />}
       </View>
-      <FlatList
-        data={order?.order_items}
-        keyExtractor={(item: any) => item.id}
-        renderItem={({ item }) => <OrderDetails order={item} />}
-        contentContainerStyle={{ gap: 10 }}
-      />
+      {order?.order_items && (
+        <FlatList
+          data={order?.order_items}
+          keyExtractor={(item: any) => item.id}
+          renderItem={({ item }: any) => <OrderDetails order={item} />}
+          contentContainerStyle={{ gap: 10 }}
+        />
+      )}
     </SafeAreaView>
   );
 };

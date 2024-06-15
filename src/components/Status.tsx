@@ -7,6 +7,7 @@ interface StatusProps {
   selected: OrderStatus | undefined;
 }
 const Status = ({ status, handleSelected, selected }: StatusProps) => {
+ 
   return (
     <TouchableOpacity
       onPress={() => handleSelected(status)}
@@ -14,11 +15,11 @@ const Status = ({ status, handleSelected, selected }: StatusProps) => {
       className={`${
         status === selected ? "bg-gray-100" : ""
       } border px-4 py-2 rounded ml-1 ${
-        status == "Delivered"
+        status == "DELIVERED"
           ? "border-green-500"
-          : status === "Cooking"
+          : status === "COOKING"
           ? "border-orange-500"
-          : status === "Delivering"
+          : status === "DELIVERING"
           ? "border-secondary-100"
           : "border-gray-100"
       }`}

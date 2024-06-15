@@ -1,13 +1,19 @@
-import { FlatList, StyleSheet } from "react-native";
+import { Alert, FlatList } from "react-native";
 
-import EditScreenInfo from "@/src/components/EditScreenInfo";
-import { Text, View } from "@/src/components/Themed";
 import { SafeAreaView } from "react-native-safe-area-context";
-import orders from "@/assets/data/orders";
-import { Order } from "@/src/type";
+
+import Loading from "@/src/components/Loading";
 import OrderItem from "@/src/components/OrderItem";
+import { useAdminOrders } from "@/src/lib/query";
 
 export default function Orders() {
+  const { data: orders, error, isLoading } = useAdminOrders(true);
+  if (isLoading) {
+    return <Loading />;
+  }
+  if (error) {
+    return Alert.alert("Error Fetching Order", error.message);
+  }
   return (
     <SafeAreaView className="bg-primary px-4 flex-1">
       <FlatList

@@ -1,9 +1,9 @@
-import { Product } from "@/src/type";
-import { createSlice, configureStore, PayloadAction } from "@reduxjs/toolkit";
+import { Tables } from "@/src/database.types";
+import { PayloadAction, createSlice } from "@reduxjs/toolkit";
 
 export interface CartItems {
   id: number;
-  image: string;
+  image: string | null;
   name: string;
   price: number;
   quantity: number;
@@ -18,7 +18,7 @@ export interface CartProps {
   sizes: string;
 }
 export interface CartProductProps {
-  product: Product;
+  product: Tables<"products">;
   size: string;
 }
 const initialState = {
@@ -58,7 +58,7 @@ const cartSlice = createSlice({
         0
       );
     },
-    deleteProduct(state: CartProps, action: PayloadAction<Product>) {
+    deleteProduct(state: CartProps, action: PayloadAction<CartItems>) {
       const product = action.payload;
       // check if the product is in the cart
       const item = state.cartItems.find((p) => p.id === product.id);
@@ -66,7 +66,7 @@ const cartSlice = createSlice({
         state.cartItems = state.cartItems.filter((i) => i.id !== product.id);
       }
     },
-    increaseQuantity(state: CartProps, action: PayloadAction<Product>) {
+    increaseQuantity(state: CartProps, action: PayloadAction<CartItems>) {
       const product = action.payload;
       // check if the item exists
       const existingItem = state.cartItems.find((p) => p.id === product.id);
@@ -78,7 +78,7 @@ const cartSlice = createSlice({
       }
     },
 
-    decreaseQuantity(state: CartProps, action: PayloadAction<Product>) {
+    decreaseQuantity(state: CartProps, action: PayloadAction<CartItems>) {
       const product = action.payload;
       // check if the item exists
       const existingItem = state.cartItems.find((p) => p.id === product.id);
@@ -97,7 +97,7 @@ const cartSlice = createSlice({
     },
     selectSize(
       state: CartProps,
-      action: PayloadAction<{ size: string; product: Product }>
+      action: PayloadAction<{ size: string; product: Tables<"products"> }>
     ) {
       const { size, product } = action.payload;
       state.sizes = size;
@@ -109,6 +109,12 @@ const cartSlice = createSlice({
         existingItem.size = size;
       }
     },
+    clearCart(state) {
+      state.cartItems = [];
+      state.sizes = "M";
+      state.totalAmount = 0;
+      state.totalQuantity = 0;
+    },
   },
 });
 
@@ -118,6 +124,7 @@ export const {
   increaseQuantity,
   decreaseQuantity,
   selectSize,
+  clearCart,
 } = cartSlice.actions;
 
 export default cartSlice.reducer;

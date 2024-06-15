@@ -7,7 +7,7 @@ import { useRouter } from "expo-router";
 const NoItemInCart = () => {
   const router = useRouter();
   const handlePress = () => {
-    router.push("/menu");
+    router.push("/user/menu");
   };
   return (
     <SafeAreaView className="flex-1 bg-primary px-4">

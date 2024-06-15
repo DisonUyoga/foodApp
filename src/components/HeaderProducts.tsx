@@ -1,9 +1,10 @@
 import { View, Text, FlatList } from "react-native";
 import React, { useState } from "react";
-import { Product } from "../type";
+
 import ProductCard from "./ProductCard";
+import { Tables } from "../database.types";
 interface ProductsOnOfferProps {
-  products: Product[];
+  products: Tables<"products">[];
   title: string;
   textStyle?: string;
 }

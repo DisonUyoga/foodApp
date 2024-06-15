@@ -1,24 +1,31 @@
-import { FlatList, Image, StyleSheet } from "react-native";
+import { Alert, FlatList } from "react-native";
 
-import EditScreenInfo from "@/src/components/EditScreenInfo";
-import { Text, View } from "@/src/components/Themed";
-import { SafeAreaView } from "react-native-safe-area-context";
-import Badge from "../../../components/Badge";
 import products from "@/assets/data/products";
 import ProductCard from "@/components/ProductCard";
-import { Product } from "@/src/type";
 import ProductsOnOffer from "@/src/components/HeaderProducts";
-import { Stack } from "expo-router";
+import Loading from "@/src/components/Loading";
+import { Text, View } from "@/src/components/Themed";
+import { useGetProducts } from "@/src/lib/query";
+import { SafeAreaView } from "react-native-safe-area-context";
+import { useLocalSearchParams } from "expo-router";
+import UpLoading from "@/src/components/Uploading";
 const product = products[0];
 const productOnOffer = products.slice(0, 5);
 
 export default function TabOneScreen() {
+  const { data, error, isLoading } = useGetProducts();
+
+  if (isLoading) {
+    return <Loading />;
+  }
+  if (error) {
+    return Alert.alert("Fetch Error", error.message);
+  }
   return (
-    <SafeAreaView className="bg-primary flex-1 ">
-     
-      <View className="items-center justify-center bg-transparent">
+    <SafeAreaView className="bg-primary flex-1 px-4">
+      <View className="bg-transparent">
         <FlatList
-          data={products}
+          data={data}
           renderItem={({ item }) => (
             <ProductCard
               product={item}
@@ -31,20 +38,14 @@ export default function TabOneScreen() {
               <Text className="text-2xl text-white text-center font-bold">
                 Welcome to Pizza Paradise!
               </Text>
-              <View className="bg-transparent">
-                <ProductsOnOffer
-                  textStyle="text-gray-100 font-bold text-center text-xl"
-                  products={products}
-                  title="Special Deals Just for You!!!"
-                />
-              </View>
+
               <Text className="text-white text-center">
                 Pizza Galore: Find Your Favorite
               </Text>
             </View>
           )}
           numColumns={2}
-          contentContainerStyle={{ gap: 10, padding: 10 }}
+          contentContainerStyle={{ gap: 10, paddingBottom: 30 }}
           columnWrapperStyle={{ gap: 10 }}
         />
       </View>

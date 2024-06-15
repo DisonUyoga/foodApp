@@ -1,7 +1,7 @@
-import { View, Text, Pressable } from "react-native";
+import { View, Text, Pressable, TouchableOpacity } from "react-native";
 import React, { memo } from "react";
-import { OrderItem, Product } from "../type";
-import { Image } from "react-native";
+import { OrderItem } from "../type";
+import { Image } from "expo-image";
 import Badge from "./Badge";
 import * as Animatable from "react-native-animatable";
 import { Link, useRouter, useSegments } from "expo-router";
@@ -10,6 +10,11 @@ import { addToCart } from "../app/features/slices/cartSlice";
 import { useDispatch } from "react-redux";
 import { toast } from "../utils/toast";
 import { useAppDispatch, useAppSelector } from "../utils/hooks";
+import products from "@/assets/data/products";
+import { StyleSheet } from "react-native";
+import { blurhash } from "@/assets/data/products";
+import { Tables } from "../database.types";
+import RemoteImage from "./RemoteImage";
 
 const zoomIn: any = {
   0: {
@@ -29,7 +34,7 @@ const zoomOut: any = {
 };
 
 interface ProductProps {
-  product: Product;
+  product: Tables<"products">;
   otherStyles?: string;
   containerStyle?: string;
   animateItem?: string;
@@ -44,7 +49,7 @@ const ProductCard = ({
   const { sizes: size } = useAppSelector((state) => state.cart);
   const router = useRouter();
   const segments = useSegments();
-  function addProductToCart(product: Product) {
+  function addProductToCart(product: Tables<"products">) {
     if (!product) return;
     dispatch(addToCart({ product, size }));
 
@@ -52,40 +57,42 @@ const ProductCard = ({
 
     // router.push("/cart");
   }
-  console.log(segments);
+
   return (
     <>
       {!animateItem ? (
         <Link href={`/${segments[0]}/menu/${product?.id}`} asChild>
-          <Pressable
-            className={` space-y-2  py-4 rounded-lg ${containerStyle}`}
+          <TouchableOpacity
+            activeOpacity={0.7}
+            style={styles.container}
+            className="border border-secondary rounded"
           >
-            <View className="w-full bg-transparent items-center justify-center">
-              <Image
-                source={{ uri: product?.image }}
-                resizeMode="contain"
-                className={`aspect-square ${otherStyles}`}
-              />
-            </View>
+            <RemoteImage
+              fallback={products[0].image}
+              path={product.image as string}
+            />
+
             <View className="bg-transparent w-full items-center justify-center">
               <Text className="text-white mb-4" numberOfLines={1}>
                 {product?.name}
               </Text>
               <Badge price={product?.price} />
             </View>
-          </Pressable>
+          </TouchableOpacity>
         </Link>
       ) : (
         <Animatable.View
-          className={`w-48 space-y-2  py-4 rounded-lg ${containerStyle}`}
+          className={`w-[150px]   space-y-2 p-2   rounded-lg ${containerStyle}`}
           animation={animateItem === product.id.toString() ? zoomIn : zoomOut}
           duration={10}
         >
           <View className="w-full bg-transparent items-center justify-center">
             <Image
-              source={{ uri: product?.image }}
-              resizeMode="contain"
-              className={` aspect-square ${otherStyles}`}
+              style={styles.image}
+              source={product.image ?? products[0].image}
+              placeholder={{ blurhash }}
+              contentFit="contain"
+              transition={1000}
             />
           </View>
           <View className="bg-transparent w-full items-center justify-center">
@@ -113,3 +120,20 @@ const ProductCard = ({
 };
 
 export default memo(ProductCard);
+
+const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+    borderWidth: 1,
+    borderBlockColor: "#FF9C01",
+    alignItems: "center",
+    justifyContent: "center",
+    padding: 10,
+    maxWidth: "50%",
+    maxHeight: 250,
+  },
+  image: {
+    width: "80%",
+    aspectRatio: 1,
+  },
+});

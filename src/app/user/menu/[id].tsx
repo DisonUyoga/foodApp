@@ -1,22 +1,31 @@
-import products from "@/assets/data/products";
-import Badge from "@/src/components/Badge";
-import Button from "@/src/components/Button";
+import products, { blurhash, sizes } from "@/assets/data/products";
+
+import CartDetails from "@/src/components/CartDetails";
+import Loading from "@/src/components/Loading";
 import SelectSize from "@/src/components/SelectSize";
-import { Product } from "@/src/type";
+import { Tables } from "@/src/database.types";
+import { useGetProduct } from "@/src/lib/query";
 import { useAppDispatch, useAppSelector } from "@/src/utils/hooks";
-import { priceTag } from "@/src/utils/priceTag";
+import { Image } from "expo-image";
 import { Stack, useLocalSearchParams, useRouter } from "expo-router";
 import React, { useState } from "react";
-import { Image, Text, View } from "react-native";
-import { toast } from "../../../utils/toast";
+import {
+  Alert,
+  StyleSheet,
+  View,
+  Button,
+  ActivityIndicator,
+} from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
+import { toast } from "../../../utils/toast";
 import { addToCart, selectSize } from "../../features/slices/cartSlice";
-import CartDetails from "@/src/components/CartDetails";
-import { sizes } from "@/assets/data/products";
+import RemoteImage from "@/src/components/RemoteImage";
+import ProductDetailImage from "@/src/components/ProductDetailImage";
 
 const ProductDetail = () => {
   const { id, update } = useLocalSearchParams();
-  const product = products.find((p) => p.id.toString() === id);
+  const [loading, setLoading] = useState(false);
+  const { data: product, error, isLoading } = useGetProduct(id as string);
 
   const dispatch = useAppDispatch();
   const router = useRouter();
@@ -27,6 +36,13 @@ const ProductDetail = () => {
   } = useAppSelector((state) => state.cart);
   const cartItems = useAppSelector((state) => state.cart.cartItems);
   const cartItem = cartItems.find((p) => p.id === product?.id);
+
+  if (isLoading) {
+    return <Loading />;
+  }
+  if (error) {
+    return;
+  }
   const handleSelected = (size: string) => {
     if (!product) return;
     dispatch(selectSize({ size, product }));
@@ -38,14 +54,20 @@ const ProductDetail = () => {
     }
   }
 
-  if (!product) return <Text>Oops product does not exists</Text>;
-  function addProductToCart(product: Product) {
+  function addProductToCart(product: Tables<"products">) {
     if (!product) return;
-    dispatch(addToCart({ product, size: selected }));
+    try {
+      setLoading(true);
+      dispatch(addToCart({ product, size: selected }));
+      setLoading(false);
+      toast("item added to cart", "green");
 
-    toast("item added to cart", "green");
-
-    router.push("/cart");
+      router.push("/cart");
+    } catch (error: any) {
+      Alert.alert("Error", error);
+    } finally {
+      setLoading(false);
+    }
   }
 
   return (
@@ -53,14 +75,14 @@ const ProductDetail = () => {
       <View className="bg-transparent w-full">
         <Stack.Screen
           options={{
-            title: `${product.name}`,
+            title: product && `${product.name}`,
           }}
         />
-        <Image
-          source={{ uri: product.image }}
-          resizeMode="contain"
-          className="w-full aspect-square"
+        <ProductDetailImage
+          fallback={products[0].image}
+          path={product?.image as string}
         />
+
         <View className="flex-row w-full bg-transparent items-start justify-between mt-7 mb-7">
           {sizes.map((item) => (
             <SelectSize
@@ -72,21 +94,43 @@ const ProductDetail = () => {
           ))}
         </View>
 
-        <CartDetails
-          price={product.price}
-          quantity={cartItem?.quantity}
-          totalAmount={totalAmount}
-          textStyles="text-gray-100 text-xs font-bold"
-        />
+        {product && (
+          <CartDetails
+            price={product.price}
+            quantity={cartItem?.quantity}
+            totalAmount={totalAmount}
+            textStyles="text-gray-100 text-xs font-bold"
+          />
+        )}
 
-        <Button
-          text="Add to Cart"
-          onPress={() => addProductToCart(product)}
-          otherStyles="w-full bg-secondary p-4 text-center items-center mt-10 rounded"
-        />
+        {product && (
+          <View className="mt-7">
+            {loading ? (
+              <View className="items-center justify-center bg-transparent">
+                <ActivityIndicator />
+              </View>
+            ) : (
+              <Button
+                title="add to cart"
+                color="#FF9001"
+                disabled={loading}
+                onPress={() => {
+                  setLoading(true);
+                  addProductToCart(product);
+                }}
+              />
+            )}
+          </View>
+        )}
       </View>
     </SafeAreaView>
   );
 };
 
 export default ProductDetail;
+const styles = StyleSheet.create({
+  image: {
+    width: "100%",
+    aspectRatio: 1,
+  },
+});

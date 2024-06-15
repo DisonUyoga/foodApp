@@ -1,13 +1,28 @@
 import { FontAwesome } from "@expo/vector-icons";
-import { Link } from "expo-router";
+import { Link, Redirect, useRouter } from "expo-router";
 import { Formik } from "formik";
 import React, { useState } from "react";
-import { Button, Text, TouchableOpacity, View } from "react-native";
+import {
+  ActivityIndicator,
+  Button,
+  Text,
+  TouchableOpacity,
+  View,
+} from "react-native";
 import { ResetFormType, UserType } from "../type";
 import { toast } from "../utils/toast";
 import { userValidation } from "../utils/validation";
 import FormElement from "./FormElement";
 import ValidationError from "./ValidationError";
+import { supabase } from "../lib/supabase";
+import { Alert } from "react-native";
+import { useAppDispatch, useAppSelector } from "../utils/hooks";
+import {
+  processingAuth,
+  sessionToken,
+  setAdmin,
+  setProfileData,
+} from "../app/features/slices/AuthSlice";
 
 export interface SignInWithGoogleProps {
   title: string;
@@ -17,10 +32,64 @@ export interface SignInWithGoogleProps {
 
 const SigninWithGoogleOrMail = ({ title, type }: SignInWithGoogleProps) => {
   const [form, setForm] = useState<UserType>({
-    username: "",
+    phone: "",
     password: "",
     email: "",
   });
+  const dispatch = useAppDispatch();
+  const router = useRouter();
+  const { authLoading } = useAppSelector((state) => state.auth);
+  async function signupWithEmail(
+    email: string,
+    password: string,
+    phone: string
+  ) {
+    dispatch(processingAuth({ authLoading: true }));
+    // sign up logic
+    if (type === "signup") {
+      const { error: supabaseError } = await supabase.auth.signUp({
+        email,
+        password,
+        phone,
+      });
+      if (!supabaseError?.message) {
+        toast("sign up successfull", "green");
+        router.push("/sign-in");
+      }
+      setError([supabaseError?.message as string]);
+      dispatch(processingAuth({ authLoading: false }));
+
+      return;
+    }
+    // sign in logic
+    const { error: supabaseError } = await supabase.auth.signInWithPassword({
+      email,
+      password,
+    });
+    setError([supabaseError?.message as string]);
+    if (!supabaseError?.message) {
+      toast("login successfull", "green");
+      const { data, error } = await supabase.auth.getSession();
+      dispatch(sessionToken({ session: data.session }));
+      // query profile data to determine the role i.e user or admin session
+      if (data.session) {
+        const { data: profileData } = await supabase
+          .from("profiles")
+          .select("*")
+          .eq("id", data.session.user.id)
+          .single();
+        console.log("profile", profileData);
+        dispatch(setProfileData({ profile: profileData }));
+        dispatch(
+          setAdmin({ isAdmin: profileData?.group === "ADMIN" ? true : false })
+        );
+        dispatch(processingAuth({ authLoading: false }));
+      }
+      <Redirect href={"/user/menu"} />;
+    } else {
+      <Redirect href={"/sign-in"} />;
+    }
+  }
   const [error, setError] = useState<string[] | undefined>([]);
 
   return (
@@ -31,8 +100,14 @@ const SigninWithGoogleOrMail = ({ title, type }: SignInWithGoogleProps) => {
           setError([]);
           try {
             await userValidation.validate(value);
-            resetForm({ values: { username: "", password: "", email: "" } });
-            toast("Login successfull", "green");
+
+            await signupWithEmail(
+              value.email as string,
+              value.password,
+              value.phone as string
+            );
+
+            resetForm({ values: { phone: "", password: "", email: "" } });
           } catch (error: any) {
             error.errors.map((err: any) =>
               setError((prev: any) => {
@@ -45,22 +120,24 @@ const SigninWithGoogleOrMail = ({ title, type }: SignInWithGoogleProps) => {
       >
         {({ handleChange, handleBlur, values, handleSubmit }) => (
           <View className="item-center w-full">
-            <FormElement
-              label="Username"
-              placeholder="username"
-              value={values.username}
-              handleChange={handleChange("username")}
-              onBlur={handleBlur("username")}
-            />
-            {type === "signup" && (
+            {type == "signup" && (
               <FormElement
-                label="Email"
-                placeholder="email"
-                value={values.email}
-                onBlur={handleBlur("email")}
-                handleChange={handleChange("email")}
+                label="Phone"
+                placeholder="phone"
+                value={values.phone}
+                handleChange={handleChange("phone")}
+                onBlur={handleBlur("phone")}
               />
             )}
+
+            <FormElement
+              label="Email"
+              placeholder="email"
+              value={values.email}
+              onBlur={handleBlur("email")}
+              handleChange={handleChange("email")}
+            />
+
             <FormElement
               label="Password"
               placeholder="password"
@@ -69,11 +146,16 @@ const SigninWithGoogleOrMail = ({ title, type }: SignInWithGoogleProps) => {
               handleChange={handleChange("password")}
             />
             <View className="mt-7">
-              <Button
-                title="Submit"
-                onPress={handleSubmit as any}
-                color="#FF8E01"
-              />
+              {authLoading ? (
+                <ActivityIndicator size={"small"} color="#ffff" />
+              ) : (
+                <Button
+                  title="Submit"
+                  onPress={handleSubmit as any}
+                  color="#FF8E01"
+                  disabled={authLoading}
+                />
+              )}
             </View>
           </View>
         )}
@@ -92,8 +174,8 @@ const SigninWithGoogleOrMail = ({ title, type }: SignInWithGoogleProps) => {
         error.map((err, index) => <ValidationError key={index} error={err} />)}
       {type === "signup" ? (
         <View className="items-center mt-4">
-          <Text>
-            Have an account?
+          <Text className="text-white">
+            Have an account?{" "}
             <Link className="text-secondary" href="/sign-in">
               Sign in
             </Link>
@@ -101,8 +183,8 @@ const SigninWithGoogleOrMail = ({ title, type }: SignInWithGoogleProps) => {
         </View>
       ) : (
         <View className="items-center mt-4">
-          <Text>
-            Don't have an account?
+          <Text className="text-gray-100">
+            Don't have an account?{" "}
             <Link className="text-secondary" href="/sign-up">
               Sign up
             </Link>

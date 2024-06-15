@@ -1,26 +1,25 @@
-import products from "@/assets/data/products";
+import products, { blurhash } from "@/assets/data/products";
 import Badge from "@/src/components/Badge";
-import Button from "@/src/components/Button";
-import SelectSize from "@/src/components/SelectSize";
-import { Product } from "@/src/type";
-import { useAppDispatch, useAppSelector } from "@/src/utils/hooks";
-import { priceTag } from "@/src/utils/priceTag";
-import { Link, Stack, useLocalSearchParams, useRouter } from "expo-router";
-import React, { useState } from "react";
-import { Image, Pressable, Text, View } from "react-native";
-import { toast } from "../../../utils/toast";
-import { SafeAreaView } from "react-native-safe-area-context";
-import { addToCart, selectSize } from "../../features/slices/cartSlice";
-import CartDetails from "@/src/components/CartDetails";
-import { sizes } from "@/assets/data/products";
-import { FontAwesome } from "@expo/vector-icons";
-import Colors from "@/src/components/constants/Colors";
+import Loading from "@/src/components/Loading";
+import RemoteImage from "@/src/components/RemoteImage";
 import { useColorScheme } from "@/src/components/useColorScheme";
-
+import { useGetProduct } from "@/src/lib/query";
+import { Tables } from "@/src/type";
+import { useAppDispatch, useAppSelector } from "@/src/utils/hooks";
+import { FontAwesome } from "@expo/vector-icons";
+import { Image } from "expo-image";
+import { Link, Stack, useLocalSearchParams, useRouter } from "expo-router";
+import React from "react";
+import { Alert, Pressable, StyleSheet, Text, View } from "react-native";
+import { SafeAreaView } from "react-native-safe-area-context";
+import { toast } from "../../../utils/toast";
+import { addToCart, selectSize } from "../../features/slices/cartSlice";
 const ProductDetail = () => {
   const { id, update } = useLocalSearchParams();
+
   const colorScheme = useColorScheme();
-  const product = products.find((p) => p.id.toString() === id);
+
+  const { data: product, error, isLoading } = useGetProduct(id as string);
 
   const dispatch = useAppDispatch();
   const router = useRouter();
@@ -31,6 +30,12 @@ const ProductDetail = () => {
   } = useAppSelector((state) => state.cart);
   const cartItems = useAppSelector((state) => state.cart.cartItems);
   const cartItem = cartItems.find((p) => p.id === product?.id);
+  if (isLoading) {
+    return <Loading />;
+  }
+  if (error) {
+    return;
+  }
   const handleSelected = (size: string) => {
     if (!product) return;
     dispatch(selectSize({ size, product }));
@@ -43,7 +48,7 @@ const ProductDetail = () => {
   }
 
   if (!product) return <Text>Oops product does not exists</Text>;
-  function addProductToCart(product: Product) {
+  function addProductToCart(product: Tables<"products">) {
     if (!product) return;
     dispatch(addToCart({ product, size: selected }));
 
@@ -75,7 +80,7 @@ const ProductDetail = () => {
                       <FontAwesome
                         name="pencil"
                         size={25}
-                        color={Colors[colorScheme ?? "light"].text}
+                        color={"#fff"}
                         style={{ marginRight: 15, opacity: pressed ? 0.5 : 1 }}
                       />
                     </View>
@@ -85,16 +90,23 @@ const ProductDetail = () => {
             ),
           }}
         />
-        <Image
-          source={{ uri: product.image }}
-          resizeMode="contain"
-          className="w-full aspect-square mb-7"
-        />
 
-        <Badge price={product.price} />
+        <RemoteImage
+          fallback={products[0].image}
+          path={product.image as string}
+        />
+        <View className="mt-7">
+          <Badge price={product.price} />
+        </View>
       </View>
     </SafeAreaView>
   );
 };
 
 export default ProductDetail;
+const styles = StyleSheet.create({
+  image: {
+    width: "100%",
+    aspectRatio: 1,
+  },
+});

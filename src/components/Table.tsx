@@ -2,6 +2,7 @@ import { View, Text, Image } from "react-native";
 import React from "react";
 import { CartItems } from "../app/features/slices/cartSlice";
 import styled from "styled-components/native";
+import products from "@/assets/data/products";
 
 const TextView = styled.View`
   display: flex;
@@ -14,7 +15,7 @@ const Table = ({ product }: { product: CartItems }) => {
   return (
     <TextView>
       <Image
-        source={{ uri: product.image }}
+        source={{ uri: product.image ?? products[0].image }}
         resizeMode="contain"
         className="w-12 h-12 aspect-square"
       />

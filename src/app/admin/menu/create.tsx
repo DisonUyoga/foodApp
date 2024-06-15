@@ -1,13 +1,23 @@
 import icons from "@/constants/icons";
+import DeletingLoader from "@/src/components/DeletingLoader";
 import FormElement from "@/src/components/FormElement";
+import Loading from "@/src/components/Loading";
+import UpLoading from "@/src/components/Uploading";
 import ValidationError from "@/src/components/ValidationError";
-import { CreateType, ResetFormType } from "@/src/type";
+import {
+  useCreateProduct,
+  useDelete,
+  useUpdateProduct,
+} from "@/src/lib/mutate";
+import { useGetProduct } from "@/src/lib/query";
+import { uploadImage } from "@/src/lib/uploadImage";
+// import { CreateType } from "@/src/type";
+import { useAppSelector } from "@/src/utils/hooks";
 import { toast } from "@/src/utils/toast";
 import { validationSchema } from "@/src/utils/validation";
 import * as ImagePicker from "expo-image-picker";
-import { Stack, useLocalSearchParams } from "expo-router";
-import { Formik } from "formik";
-import React, { useState } from "react";
+import { Stack, router, useLocalSearchParams } from "expo-router";
+import React, { useEffect, useState } from "react";
 import {
   Alert,
   Image,
@@ -20,59 +30,128 @@ import { SafeAreaView } from "react-native-safe-area-context";
 import styled from "styled-components/native";
 
 const Create = () => {
-  const [form, setForm] = useState<CreateType>({
-    name: null,
-    price: 0,
-    imageUrl: null,
-  });
-
+  const [name, setName] = useState("");
+  const [price, setPrice] = useState<number | null>(null);
+  const [image, setImage] = useState<string | null>(null);
+  const [file, setFile] = useState<ImagePicker.ImagePickerAsset>();
   const { id } = useLocalSearchParams();
-  const [error, setError] = useState<any>([]);
+  const { globalErrors } = useAppSelector((state) => state.error);
+  const [error, setError] = useState<any>([...globalErrors]);
+  const [loading, setLoading] = useState(false);
+  const [deleteLoading, setDeleteLoading] = useState(false);
   const isUpdating = !!id;
-  const openPicker = async () => {
-    const res = await ImagePicker.launchImageLibraryAsync({
-      mediaTypes: ImagePicker.MediaTypeOptions.Images,
-      aspect: [4, 3],
-      quality: 1,
-    });
+  const { mutate: createProduct, isPending } = useCreateProduct();
+  const { mutate: updateProduct } = useUpdateProduct();
+  const { mutate: deleteProduct } = useDelete();
+  const {
+    data: updatingProduct,
+    isLoading,
+    error: updateError,
+  } = useGetProduct(id as string);
 
-    if (!res.canceled) {
-      setForm({ ...form, imageUrl: res.assets[0] });
+  useEffect(() => {
+    if (updatingProduct) {
+      setName(updatingProduct.name);
+      setPrice(updatingProduct.price);
+      setImage(updatingProduct.image);
+    }
+  }, [updatingProduct]);
+  if (loading) {
+    return (
+      <View className="bg-primary flex-1 items-center justify-center">
+        <UpLoading />
+      </View>
+    );
+  }
+  if (deleteLoading) {
+    return (
+      <View className=" flex-1 items-center justify-center">
+        <DeletingLoader />
+      </View>
+    );
+  }
+  if (isLoading) {
+    return <Loading />;
+  }
+
+  const openPicker = async () => {
+    try {
+      const res = await ImagePicker.launchImageLibraryAsync({
+        mediaTypes: ImagePicker.MediaTypeOptions.Images,
+        aspect: [4, 3],
+        quality: 1,
+      });
+
+      if (!res.canceled) {
+        setImage(res.assets[0].uri);
+
+        setFile(res.assets[0]);
+      }
+    } catch (error: any) {
+      Alert.alert("Error", error);
     }
   };
-  const onSubmit = async (values: CreateType) => {
+  const onSubmit = async () => {
     if (isUpdating) {
-      update();
+      return update();
     }
-    handleSubmit();
+    return handleSubmit();
   };
   const handleSubmit = async () => {
-    let validationError;
-    // field validation
+    setLoading(true);
     setError([]);
     try {
-      console.log(form);
-      await validationSchema.validate(form);
-
-      toast("product added successfully", "green");
+      await validationSchema.validate({
+        name,
+        price: price,
+        image,
+      });
+      const imagePath = (await uploadImage(file, image as string)) as
+        | string
+        | null;
+      console.log("path", imagePath);
+      createProduct(
+        { name, price, image: imagePath },
+        {
+          onSuccess: () => {
+            resetFields();
+            setLoading(false);
+            router.push(`/admin/menu`);
+          },
+        }
+      );
     } catch (error: any) {
       error.errors.map((err: string) =>
         setError((prev: string[]) => {
           return [...prev, err];
         })
       );
-      console.log(error);
     } finally {
-      console.log("something happened");
-      setForm({
-        name: "",
-        price: 0,
-        imageUrl: null,
-      });
+      setLoading(false);
     }
   };
-  function update() {
-    console.log("updating");
+  async function update() {
+    setLoading(true);
+    const imagePath = (await uploadImage(file, image as string)) as
+      | string
+      | null;
+    try {
+      if (!id) return;
+      updateProduct(
+        { id: id as string, name, image: imagePath, price },
+        {
+          onSuccess: () => {
+            resetFields();
+            setLoading(false);
+            toast("product updated successfully", "green");
+            router.back();
+          },
+        }
+      );
+    } catch (error) {
+    } finally {
+      setLoading(false);
+    }
   }
 
   const handleDelete = () => {
@@ -90,7 +169,16 @@ const Create = () => {
   };
 
   const onDelete = () => {
-    console.log("item deleted");
+    setDeleteLoading(true);
+    if (!id) return;
+    deleteProduct(id as string, {
+      onSuccess: () => {
+        resetFields();
+        setDeleteLoading(false);
+        toast("product deleted successfully", "green");
+        router.replace("/admin/menu");
+      },
+    });
   };
   const Button = styled.Button`
     background-color: yellow;
@@ -99,7 +187,14 @@ const Create = () => {
     padding: 10px;
     font-size: 0.9rem;
   `;
-  console.log(isUpdating);
+  function resetFields() {
+    setName("");
+    setPrice(null);
+    setImage(null);
+    setFile(undefined);
+  }
+
+  console.log(loading);
   return (
     <SafeAreaView className="bg-primary flex-1 items-center justify-center px-4">
       <Stack.Screen
@@ -120,23 +215,23 @@ const Create = () => {
           <FormElement
             label="Name"
             placeholder="name..."
-            value={form.name}
-            handleChange={(e) => setForm({ ...form, name: e })}
+            value={name}
+            handleChange={(e) => setName(e)}
           />
           <FormElement
             label="Price"
             placeholder="price..."
-            value={form.price}
-            handleChange={(e) => setForm({ ...form, price: parseInt(e) })}
+            value={isUpdating ? price?.toString() : price}
+            handleChange={(e) => setPrice(e as unknown as number)}
             keyboardType="numeric"
           />
 
-          {form.imageUrl && (
+          {image && (
             <View className="w-full items-center mt-4">
               <Image
-                source={{ uri: form.imageUrl.uri }}
-                resizeMode="cover"
-                className="w-full h-64 rounded-2xl"
+                source={{ uri: image }}
+                resizeMode="contain"
+                className="w-full h-64"
               />
             </View>
           )}
@@ -153,17 +248,15 @@ const Create = () => {
                   className="w-1/2 h-1/2"
                 />
               </View>
-              {form.imageUrl?.fileName && (
-                <Text className="text-white text-xs">
-                  {form.imageUrl?.fileName}
-                </Text>
+              {file?.fileName && (
+                <Text className="text-white text-xs">{file.fileName}</Text>
               )}
             </View>
           </TouchableOpacity>
           <View className="w-full mt-4 mb-4">
             <Button
               title={isUpdating ? "Update" : "Create"}
-              onPress={handleSubmit as any}
+              onPress={onSubmit as any}
               color={"#FF8E01"}
             />
           </View>
