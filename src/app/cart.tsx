@@ -50,7 +50,7 @@ const cart = () => {
   if (isLoading || isPending || stripePending) {
     return (
       <View className="flex-1 bg-primary items-center justify-center">
-        <ActivityIndicator size color="#FF9001" />
+        <ActivityIndicator size={"large"} color="#FF9001" />
       </View>
     );
   }

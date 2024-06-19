@@ -1,7 +1,7 @@
 {
   "expo": {
-    "name": "food.delivery.app",
-    "slug": "food.delivery.app",
+    "name": "FoodOrdering",
+    "slug": "FoodOrdering",
     "version": "1.0.0",
     "orientation": "portrait",
     "icon": "./assets/images/icon.png",
@@ -17,7 +17,7 @@
     },
     "android": {
       "googleServicesFile": "./google-services.json",
-      "package": "food.delivery.app",
+      "package": "FoodOrdering",
       "adaptiveIcon": {
         "foregroundImage": "./assets/images/adaptive-icon.png",
         "backgroundColor": "#ffffff"
@@ -37,6 +37,14 @@
     "experiments": {
       "typedRoutes": true,
       "tsconfigPaths": true
+    },
+    "extra": {
+      "router": {
+        "origin": false
+      },
+      "eas": {
+        "projectId": "aec7f35e-367e-477b-bd8f-d731c6d9a32b"
+      }
     }
   }
 }
