@@ -1,12 +1,16 @@
 import { CartItems } from "../app/features/slices/cartSlice";
+
+
 import {
   CreateType,
   InsertTables,
   OrderStatus,
+  StripeResponse,
   UpdateTables,
   UpdateType,
 } from "../type";
 import { useAppSelector } from "../utils/hooks";
+import Request, { RequestParameters } from "./axiosInstance";
 import { supabase } from "./supabase";
 
 export async function getProducts() {
@@ -162,4 +166,14 @@ export async function getOrderUpdate({
     throw error;
   }
   return data;
+}
+
+export async function getStripe({url, data, method}:RequestParameters){
+ 
+  return (await Request.get<StripeResponse>({url, data, method})).data
+
+}
+
+export async function getStripeUser(url:string){
+  return (await Request.get<StripeResponse>({url})).data
 }

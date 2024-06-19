@@ -2,6 +2,7 @@ import GrowingLoader from "@/src/components/GrowingLoader";
 import Loading from "@/src/components/Loading";
 import OrderDetails from "@/src/components/OrderDetails";
 import OrderListItem from "@/src/components/OrderItem";
+import OrderLoading from "@/src/components/OrderLoading";
 import { Tables } from "@/src/database.types";
 import { useOrderDetails } from "@/src/lib/query";
 import {
@@ -17,10 +18,13 @@ interface OrderDetailProps {
   orderItem: Tables<"orders">;
 }
 const OrderDetail = () => {
-  const { orderId } = useLocalSearchParams()!;
+  const { orderId, payment } = useLocalSearchParams()!;
   const { data: order, error, isLoading } = useOrderDetails(orderId as string);
   useUpdateSubscription(orderId as string);
 
+  if (isLoading && payment === "true") {
+    return <OrderLoading />;
+  }
   if (isLoading) {
     return (
       <View className="items-center justify-center bg-black-200 flex-1">

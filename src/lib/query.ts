@@ -6,6 +6,7 @@ import {
   getOrders,
   getProduct,
   getProducts,
+  getStripeUser,
 } from "./api";
 
 export function useGetProducts() {
@@ -46,9 +47,9 @@ export function useOrderDetails(id: string) {
     queryFn: () => getOrder(id),
   });
 }
-// export function useOrderItem(id: string) {
-//   return useQuery({
-//     queryKey: ["order_item", { order_id: id }],
-//     queryFn: () => getOrderItem(id),
-//   });
-// }
+export function useGetStripeUser(url: string) {
+  return useQuery({
+    queryKey: ["stripe_user"],
+    queryFn: () => getStripeUser(url),
+  });
+}

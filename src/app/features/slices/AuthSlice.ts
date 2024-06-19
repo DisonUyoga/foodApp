@@ -14,16 +14,20 @@ interface ProfileProps {
 interface AdminProps {
   isAdmin: boolean;
 }
+
 interface StateProps
   extends SessionProps,
     LoadingProps,
     ProfileProps,
-    AdminProps {}
+    AdminProps {
+      
+    }
 const initialState: StateProps = {
   session: null,
   authLoading: false,
   profile: null,
   isAdmin: true,
+  
 };
 
 const AuthSlice = createSlice({
@@ -47,6 +51,7 @@ const AuthSlice = createSlice({
       const { isAdmin } = action.payload;
       state.isAdmin = isAdmin;
     },
+  
   },
 });
 

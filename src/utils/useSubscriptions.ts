@@ -12,7 +12,7 @@ export function useSubscription() {
         { event: "INSERT", schema: "public", table: "orders" },
         (payload) => {
           queryClient.invalidateQueries({ queryKey: ["orders"] });
-          console.log(payload);
+          
         }
       )
       .subscribe();
@@ -36,7 +36,7 @@ export function useUpdateSubscription(id: string) {
         },
         (payload) => {
           queryClient.invalidateQueries({ queryKey: ["orders", id] });
-          console.log(payload);
+         
         }
       )
       .subscribe();

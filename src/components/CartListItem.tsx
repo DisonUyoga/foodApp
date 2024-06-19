@@ -31,7 +31,7 @@ const CartListItem = ({ cartItem }: CartListItemProps) => {
   const { totalQuantity } = useAppSelector((state) => state.cart);
   const dispatch = useAppDispatch();
   const segments = useSegments();
-  console.log(cartItem.image);
+
   return (
     <Pressable style={styles.container}>
       <Stack.Screen options={{ headerTintColor: "#fff" }} />

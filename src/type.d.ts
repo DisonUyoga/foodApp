@@ -80,3 +80,8 @@ export interface UserType {
 export interface ResetFormType {
   resetForm: (nextState?: Partial<FormikState<UserType>> | undefined) => void;
 }
+
+export interface StripeResponse{
+  username: string
+  email?: string
+}

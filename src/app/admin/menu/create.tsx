@@ -109,7 +109,7 @@ const Create = () => {
       const imagePath = (await uploadImage(file, image as string)) as
         | string
         | null;
-      console.log("path", imagePath);
+      
       createProduct(
         { name, price, image: imagePath },
         {
@@ -194,7 +194,7 @@ const Create = () => {
     setFile(undefined);
   }
 
-  console.log(loading);
+ 
   return (
     <SafeAreaView className="bg-primary flex-1 items-center justify-center px-4">
       <Stack.Screen

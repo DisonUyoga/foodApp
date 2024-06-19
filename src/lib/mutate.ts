@@ -6,11 +6,13 @@ import {
   createProduct,
   deleteProduct,
   getOrderUpdate,
+  getStripe,
   updateProduct,
 } from "./api";
 
 import { globalError } from "../app/features/slices/productSlice";
 import { store } from "../app/features/store";
+import { RequestParameters } from "./axiosInstance";
 
 export function useCreateProduct() {
   const queryClient = useQueryClient();
@@ -98,4 +100,13 @@ export function useUpdateOrder() {
       queryClient.invalidateQueries({ queryKey: ["orders", data.id] });
     },
   });
+}
+
+export function useStripePayment(){
+  return useMutation({
+    mutationFn:({url, data, method}: RequestParameters)=>getStripe({url, data, method}),
+    onError: (error) => {
+      console.log('gggggggg',error);
+    },
+  })
 }

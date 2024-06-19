@@ -29,6 +29,11 @@ export interface SignInWithGoogleProps {
 
   type?: string;
 }
+interface StripeSignupProps {
+  username: string;
+  password: string;
+  email?: string;
+}
 
 const SigninWithGoogleOrMail = ({ title, type }: SignInWithGoogleProps) => {
   const [form, setForm] = useState<UserType>({
@@ -36,6 +41,7 @@ const SigninWithGoogleOrMail = ({ title, type }: SignInWithGoogleProps) => {
     password: "",
     email: "",
   });
+
   const dispatch = useAppDispatch();
   const router = useRouter();
   const { authLoading } = useAppSelector((state) => state.auth);
@@ -52,9 +58,10 @@ const SigninWithGoogleOrMail = ({ title, type }: SignInWithGoogleProps) => {
         password,
         phone,
       });
+
       if (!supabaseError?.message) {
         toast("sign up successfull", "green");
-        router.push("/sign-in");
+        return router.push("/sign-in");
       }
       setError([supabaseError?.message as string]);
       dispatch(processingAuth({ authLoading: false }));
@@ -66,6 +73,7 @@ const SigninWithGoogleOrMail = ({ title, type }: SignInWithGoogleProps) => {
       email,
       password,
     });
+
     setError([supabaseError?.message as string]);
     if (!supabaseError?.message) {
       toast("login successfull", "green");
@@ -78,16 +86,16 @@ const SigninWithGoogleOrMail = ({ title, type }: SignInWithGoogleProps) => {
           .select("*")
           .eq("id", data.session.user.id)
           .single();
-        console.log("profile", profileData);
+
         dispatch(setProfileData({ profile: profileData }));
         dispatch(
           setAdmin({ isAdmin: profileData?.group === "ADMIN" ? true : false })
         );
         dispatch(processingAuth({ authLoading: false }));
       }
-      <Redirect href={"/user/menu"} />;
+      return <Redirect href={"/user/menu"} />;
     } else {
-      <Redirect href={"/sign-in"} />;
+      return <Redirect href={"/sign-in"} />;
     }
   }
   const [error, setError] = useState<string[] | undefined>([]);
@@ -114,7 +122,6 @@ const SigninWithGoogleOrMail = ({ title, type }: SignInWithGoogleProps) => {
                 return [...prev, err];
               })
             );
-            console.log(error);
           }
         }}
       >
