@@ -78,7 +78,9 @@
     "react-redux": "^9.1.2",
     "styled-components": "^6.1.11",
     "undefined": "dayjs/plugin/relativeTime",
-    "yup": "^1.4.0"
+    "yup": "^1.4.0",
+    "expo-notifications": "~0.28.9",
+    "expo-device": "~6.0.2"
   },
   "devDependencies": {
     "@babel/core": "^7.20.0",

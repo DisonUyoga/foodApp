@@ -20,6 +20,7 @@ import { processingAuth, sessionToken } from "./features/slices/AuthSlice";
 import QueryProvider from "../lib/QueryProvider";
 import { StatusBar } from "expo-status-bar";
 import { StripeProvider } from "@stripe/stripe-react-native";
+import NotificationProvider from "../components/NotificationProvider";
 
 export {
   // Catch any errors thrown by the Layout component.
@@ -87,33 +88,38 @@ function RootLayoutNav() {
     <Provider store={store}>
       <RootSiblingParent>
         <QueryProvider>
-          <StripeProvider
-            publishableKey={
-              process.env.EXPO_PUBLIC_STRIPE_PUBLISHABLE_KEY || ""
-            }
-          >
-            <ThemeProvider
-              value={colorScheme === "dark" ? DarkTheme : DefaultTheme}
+          <NotificationProvider>
+            <StripeProvider
+              publishableKey={
+                process.env.EXPO_PUBLIC_STRIPE_PUBLISHABLE_KEY || ""
+              }
             >
-              <Stack
-                screenOptions={{
-                  headerStyle: {
-                    backgroundColor: "#161622",
-                  },
-                  headerTintColor: "#fff",
-                  headerTitleStyle: {
-                    color: "#ffff",
-                    fontWeight: "300",
-                  },
-                }}
+              <ThemeProvider
+                value={colorScheme === "dark" ? DarkTheme : DefaultTheme}
               >
-                <Stack.Screen name="user" options={{ headerShown: false }} />
-                <Stack.Screen name="admin" options={{ headerShown: false }} />
-                <Stack.Screen name="cart" />
-                <Stack.Screen name="(auth)" options={{ headerShown: false }} />
-              </Stack>
-            </ThemeProvider>
-          </StripeProvider>
+                <Stack
+                  screenOptions={{
+                    headerStyle: {
+                      backgroundColor: "#161622",
+                    },
+                    headerTintColor: "#fff",
+                    headerTitleStyle: {
+                      color: "#ffff",
+                      fontWeight: "300",
+                    },
+                  }}
+                >
+                  <Stack.Screen name="user" options={{ headerShown: false }} />
+                  <Stack.Screen name="admin" options={{ headerShown: false }} />
+                  <Stack.Screen name="cart" />
+                  <Stack.Screen
+                    name="(auth)"
+                    options={{ headerShown: false }}
+                  />
+                </Stack>
+              </ThemeProvider>
+            </StripeProvider>
+          </NotificationProvider>
         </QueryProvider>
       </RootSiblingParent>
       <StatusBar backgroundColor="#161622" style="light" />
