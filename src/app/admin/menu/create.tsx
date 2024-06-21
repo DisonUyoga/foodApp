@@ -31,7 +31,9 @@ import styled from "styled-components/native";
 
 const Create = () => {
   const [name, setName] = useState("");
+  const [description, setDescription] = useState("");
   const [price, setPrice] = useState<number | null>(null);
+  const [discount, setDiscount] = useState<number | null>(null);
   const [image, setImage] = useState<string | null>(null);
   const [file, setFile] = useState<ImagePicker.ImagePickerAsset>();
   const { id } = useLocalSearchParams();
@@ -103,15 +105,23 @@ const Create = () => {
     try {
       await validationSchema.validate({
         name,
+        description,
         price: price,
+        discount,
         image,
       });
       const imagePath = (await uploadImage(file, image as string)) as
         | string
         | null;
-      
+
       createProduct(
-        { name, price, image: imagePath },
+        {
+          name,
+          price: price as number,
+          discount,
+          description,
+          image: imagePath,
+        },
         {
           onSuccess: () => {
             resetFields();
@@ -138,7 +148,14 @@ const Create = () => {
     try {
       if (!id) return;
       updateProduct(
-        { id: id as string, name, image: imagePath, price },
+        {
+          id: parseFloat(id as string),
+          name,
+          description,
+          discount,
+          image: imagePath,
+          price: price as number,
+        },
         {
           onSuccess: () => {
             resetFields();
@@ -194,7 +211,6 @@ const Create = () => {
     setFile(undefined);
   }
 
- 
   return (
     <SafeAreaView className="bg-primary flex-1 items-center justify-center px-4">
       <Stack.Screen
@@ -213,16 +229,29 @@ const Create = () => {
       <ScrollView>
         <View className="w-full items-center">
           <FormElement
-            label="Name"
+            label="Name*"
             placeholder="name..."
             value={name}
             handleChange={(e) => setName(e)}
           />
           <FormElement
-            label="Price"
+            label="Description"
+            placeholder="description...(optional)"
+            value={description}
+            handleChange={(e) => setDescription(e)}
+          />
+          <FormElement
+            label="Price*"
             placeholder="price..."
             value={isUpdating ? price?.toString() : price}
             handleChange={(e) => setPrice(e as unknown as number)}
+            keyboardType="numeric"
+          />
+          <FormElement
+            label="New Price"
+            placeholder="new price...(optional)"
+            value={isUpdating ? discount?.toString() : discount}
+            handleChange={(e) => setDiscount(e as unknown as number)}
             keyboardType="numeric"
           />
 

@@ -13,11 +13,12 @@ import {
 import { globalError } from "../app/features/slices/productSlice";
 import { store } from "../app/features/store";
 import { RequestParameters } from "./axiosInstance";
+import { Tables } from "../database.types";
 
 export function useCreateProduct() {
   const queryClient = useQueryClient();
   return useMutation({
-    mutationFn: (data: CreateType) => createProduct(data),
+    mutationFn: (data: InsertTables<"products">) => createProduct(data),
     onSuccess: async () => {
       await queryClient.invalidateQueries({ queryKey: ["products"] });
     },
@@ -29,7 +30,7 @@ export function useCreateProduct() {
 export function useUpdateProduct() {
   const queryClient = useQueryClient();
   return useMutation({
-    mutationFn: (data: UpdateType) => updateProduct(data),
+    mutationFn: (data: InsertTables<"products">) => updateProduct(data),
     onSuccess: async (_, { id }) => {
       await queryClient.invalidateQueries({ queryKey: ["products"] });
       await queryClient.invalidateQueries({ queryKey: ["products", id] });
@@ -106,7 +107,7 @@ export function useStripePayment(){
   return useMutation({
     mutationFn:({url, data, method}: RequestParameters)=>getStripe({url, data, method}),
     onError: (error) => {
-      console.log('gggggggg',error);
+      console.log(error);
     },
   })
 }

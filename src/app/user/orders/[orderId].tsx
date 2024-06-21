@@ -3,8 +3,11 @@ import Loading from "@/src/components/Loading";
 import OrderDetails from "@/src/components/OrderDetails";
 import OrderListItem from "@/src/components/OrderItem";
 import OrderLoading from "@/src/components/OrderLoading";
+import OrderPlaceholderSkeleton from "@/src/components/OrderPlaceholderSkeleton";
+import Skeleton from "@/src/components/Skeleton";
 import { Tables } from "@/src/database.types";
 import { useOrderDetails } from "@/src/lib/query";
+import { useAppDispatch, useAppSelector } from "@/src/utils/hooks";
 import {
   useSubscription,
   useUpdateSubscription,
@@ -19,6 +22,8 @@ interface OrderDetailProps {
 }
 const OrderDetail = () => {
   const { orderId, payment } = useLocalSearchParams()!;
+  const { cartItems } = useAppSelector((state) => state.cart);
+  const dispatch = useAppDispatch();
   const { data: order, error, isLoading } = useOrderDetails(orderId as string);
   useUpdateSubscription(orderId as string);
 
@@ -26,11 +31,7 @@ const OrderDetail = () => {
     return <OrderLoading />;
   }
   if (isLoading) {
-    return (
-      <View className="items-center justify-center bg-black-200 flex-1">
-        <GrowingLoader />
-      </View>
-    );
+    return <OrderPlaceholderSkeleton />;
   }
   if (error) {
     return Alert.alert("Error Fetching Order Detail", error.message);

@@ -10,13 +10,14 @@ import { useEffect } from "react";
 import { supabase } from "@/src/lib/supabase";
 import { useQueryClient } from "@tanstack/react-query";
 import { useSubscription } from "@/src/utils/useSubscriptions";
+import OrderPlaceholderSkeleton from "@/src/components/OrderPlaceholderSkeleton";
 export default function Orders() {
   const orderItemSubscription = useSubscription();
   const { data: orders, error, isLoading } = useAdminOrders();
   // subscribe to the order insert channel for real time status update
   useSubscription();
   if (isLoading) {
-    return <Loading />;
+    return <OrderPlaceholderSkeleton />;
   }
   if (error) {
     return Alert.alert("Error Fetching Order", error.message);

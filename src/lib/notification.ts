@@ -3,18 +3,21 @@ import { Text, View, Button, Platform } from 'react-native';
 import * as Device from 'expo-device';
 import * as Notifications from 'expo-notifications';
 import Constants from 'expo-constants';
+import { supabase } from './supabase';
+import { Tables } from '../database.types';
+import { OrderStatus } from '../type';
 
 
 
 // Can use this function below or use Expo's Push Notification Tool from: https://expo.dev/notifications
 export async function sendPushNotification(
-  expoPushToken: Notifications.ExpoPushToken
+  expoPushToken: Notifications.ExpoPushToken, title: string, body: string
 ) {
   const message = {
     to: expoPushToken,
     sound: 'default',
-    title: 'PizzaPerk',
-    body: 'You have place an order at PizzaPerk!',
+    title: title,
+    body: body,
     data: { someData: 'goes here' },
   };
 
@@ -59,10 +62,37 @@ export async function registerForPushNotificationsAsync() {
         
       })
     ).data;
-    console.log(token);
+    
   } else {
     alert('Must use physical device for Push Notifications');
   }
 
   return token;
+}
+
+async function getUserToken(userId: string){
+    const {data}= await supabase.from("profiles").select('*').eq("id", userId).single()
+    return data?.expo_push_token
+}
+
+export async function notifyUserAboutOrder(order: Tables<"orders">, status: OrderStatus){
+    const token = await getUserToken(order.user_id as string)
+    if(!token) return
+    
+    let message=""
+    switch(status){
+        case "COOKING":
+            message="Your order is cooking"
+            break
+        case "DELIVERING":
+            message="Your order is being delivered"
+            break
+        case "DELIVERED":
+            message="Your order has been delivered successfully. We are grad to serve you!!!"
+            break
+        default:
+            message="Your order has been received it will be ready within an hour"
+    }
+
+    sendPushNotification(token as unknown as Notifications.ExpoPushToken, "PizzaPerk", message)
 }

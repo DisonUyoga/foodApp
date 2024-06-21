@@ -15,6 +15,8 @@ import { StyleSheet } from "react-native";
 import { blurhash } from "@/assets/data/products";
 import { Tables } from "../database.types";
 import RemoteImage from "./RemoteImage";
+import _ from "lodash";
+import { calcDis } from "../utils/discountCalculator";
 
 const zoomIn: any = {
   0: {
@@ -57,65 +59,61 @@ const ProductCard = ({
 
     // router.push("/cart");
   }
+  const description = _.truncate(product.description as string, {
+    separator: " ",
+    length: 30,
+  });
+  const name = _.truncate(product.name as string, {
+    separator: " ",
+    length: 25,
+  });
 
   return (
-    <>
-      {!animateItem ? (
-        <Link href={`/${segments[0]}/menu/${product?.id}`} asChild>
-          <TouchableOpacity
-            activeOpacity={0.7}
-            style={styles.container}
-            className="border border-secondary rounded"
-          >
-            <RemoteImage
-              fallback={products[0].image}
-              path={product.image as string}
-            />
+    <Link href={`/${segments[0]}/menu/${product?.id}`} asChild>
+      <TouchableOpacity
+        className="flex-row space-x-2 bg-card py-2 rounded "
+        activeOpacity={0.6}
+      >
+        <RemoteImage
+          fallback={products[0].image}
+          path={product.image as string}
+        />
 
-            <View className="bg-transparent w-full items-center justify-center">
-              <Text className="text-white mb-4" numberOfLines={1}>
-                {product?.name}
-              </Text>
-              <Badge price={product?.price} />
+        <View className="space-y-2">
+          <View className="space-y-2">
+            <Text className=" text-white font-bold text-sm">{name}</Text>
+            <View className="flex-row  justify-between gap-x-4">
+              <View className="">
+                {product?.discount && (
+                  <Badge
+                    otherStyles={`bg-white text-xs text-red-500 line-through rounded-t`}
+                    price={product?.discount as number}
+                  />
+                )}
+                <Badge
+                  otherStyles={`bg-secondary text-xs ${
+                    product.discount ? "rounded-b" : "rounded"
+                  }`}
+                  price={product?.price}
+                />
+              </View>
+              {product.discount && (
+                <Text className="text-xl text-secondary font-thin">
+                  {calcDis(product.price, product.discount as number)}
+                </Text>
+              )}
             </View>
-          </TouchableOpacity>
-        </Link>
-      ) : (
-        <Animatable.View
-          className={`w-[150px]   space-y-2 p-2   rounded-lg ${containerStyle}`}
-          animation={animateItem === product.id.toString() ? zoomIn : zoomOut}
-          duration={10}
-        >
-          <View className="w-full bg-transparent items-center justify-center">
-            <Image
-              style={styles.image}
-              source={product.image ?? products[0].image}
-              placeholder={{ blurhash }}
-              contentFit="contain"
-              transition={1000}
-            />
           </View>
-          <View className="bg-transparent w-full items-center justify-center">
-            <Text className="text-white mb-4" numberOfLines={1}>
-              {product?.name}
-            </Text>
-            <Badge price={product?.price} />
-            <Button
-              text="Add to cart"
-              onPress={() => addProductToCart(product)}
-              otherStyles="bg-secondary mt-2 px-2 rounded text-xs py-2"
-            />
-            <Link
-              className="text-gray-100"
-              href={`/menu/${product?.id}`}
-              asChild
-            >
-              view
-            </Link>
-          </View>
-        </Animatable.View>
-      )}
-    </>
+          {description && (
+            <View>
+              <Text className="text-gray-100 text-xs" numberOfLines={2}>
+                {description}
+              </Text>
+            </View>
+          )}
+        </View>
+      </TouchableOpacity>
+    </Link>
   );
 };
 
@@ -123,17 +121,6 @@ export default memo(ProductCard);
 
 const styles = StyleSheet.create({
   container: {
-    flex: 1,
-    borderWidth: 1,
-    borderBlockColor: "#FF9C01",
-    alignItems: "center",
-    justifyContent: "center",
     padding: 10,
-    maxWidth: "50%",
-    maxHeight: 250,
-  },
-  image: {
-    width: "80%",
-    aspectRatio: 1,
   },
 });

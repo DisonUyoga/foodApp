@@ -21,7 +21,7 @@ const Root = () => {
   if (!isAdmin) {
     return <Redirect href={"/user/menu"} />;
   }
- 
+
   return (
     <SafeAreaView className="flex-1 items-center bg-primary justify-center space-y-6">
       <Stack.Screen

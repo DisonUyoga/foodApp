@@ -52,7 +52,7 @@ interface ResProps{
 }
 class Request {
   static async get<T>({ url,data, method,params , }: RequestParameters): Promise<AxiosResponse<T>> {
-    console.log("this is the backend error", data)
+    
     return request({
       method: method || "GET",
       url,

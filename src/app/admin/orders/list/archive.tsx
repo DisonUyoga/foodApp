@@ -5,11 +5,12 @@ import { SafeAreaView } from "react-native-safe-area-context";
 import Loading from "@/src/components/Loading";
 import OrderItem from "@/src/components/OrderItem";
 import { useAdminOrders } from "@/src/lib/query";
+import OrderPlaceholderSkeleton from "@/src/components/OrderPlaceholderSkeleton";
 
 export default function Orders() {
   const { data: orders, error, isLoading } = useAdminOrders(true);
   if (isLoading) {
-    return <Loading />;
+    return <OrderPlaceholderSkeleton />;
   }
   if (error) {
     return Alert.alert("Error Fetching Order", error.message);

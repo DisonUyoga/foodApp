@@ -122,6 +122,8 @@ const SigninWithGoogleOrMail = ({ title, type }: SignInWithGoogleProps) => {
                 return [...prev, err];
               })
             );
+          } finally {
+            dispatch(processingAuth({ authLoading: false }));
           }
         }}
       >

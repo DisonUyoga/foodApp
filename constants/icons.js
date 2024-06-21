@@ -12,6 +12,12 @@ import eyeHide from "../assets/icons/eye-hide.png";
 import eye from "../assets/icons/eye.png";
 import play from "../assets/icons/play.png";
 import cards from "../assets/icons/credit-cards.jpg";
+import pizzaperk from "../assets/icons/pizzaperk.jpg";
+import pizzaman from "../assets/icons/pizzaman.png";
+import location from "../assets/icons/location.png";
+import notfound from "../assets/icons/notfound.png";
+import admin from "../assets/icons/admin.png";
+import addItem from "../assets/icons/add-item.png";
 
 export default {
   play,
@@ -28,4 +34,10 @@ export default {
   eyeHide,
   eye,
   cards,
+  pizzaperk,
+  pizzaman,
+  location,
+  notfound,
+  admin,
+  addItem,
 };

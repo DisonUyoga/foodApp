@@ -40,7 +40,7 @@ const styles = StyleSheet.create({
     maxHeight: 250,
   },
   image: {
-    width: "80%",
+    width: 100,
     aspectRatio: 1,
   },
 });

@@ -8,12 +8,18 @@ export const validationSchema = Yup.object().shape({
     .defined("Name cannot be empty")
     .nullable("name cannot be empty")
     .required("Name is required"),
+  description:Yup.string().min(4, "The description must contain atleast four characters").notRequired(),
   image: Yup.string().required("You must include product image"),
   price: Yup.number()
     .typeError("Price must be a number")
     .required("Price cannot be empty")
     .positive("Price must be a positive number")
     .min(1, "The price must be atleast one"),
+  discount:Yup.number()
+  .typeError("discount must be a number")
+  .positive("discount must be a positive number")
+  .min(1, "The discount must be atleast one")
+  .notRequired(),
 });
 
 export const userValidation = Yup.object().shape({

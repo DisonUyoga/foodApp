@@ -12,6 +12,7 @@ import React, { useState } from "react";
 import {
   Alert,
   StyleSheet,
+  Text,
   View,
   Button,
   ActivityIndicator,
@@ -21,6 +22,8 @@ import { toast } from "../../../utils/toast";
 import { addToCart, selectSize } from "../../features/slices/cartSlice";
 import RemoteImage from "@/src/components/RemoteImage";
 import ProductDetailImage from "@/src/components/ProductDetailImage";
+import Skeleton from "@/src/components/Skeleton";
+import ProductDetailSkeletonPlaceholder from "@/src/components/ProductDetailSkeletonPlaceholder";
 
 const ProductDetail = () => {
   const { id, update } = useLocalSearchParams();
@@ -38,7 +41,7 @@ const ProductDetail = () => {
   const cartItem = cartItems.find((p) => p.id === product?.id);
 
   if (isLoading) {
-    return <Loading />;
+    return <ProductDetailSkeletonPlaceholder />;
   }
   if (error) {
     return;

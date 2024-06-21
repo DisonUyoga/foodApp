@@ -13,6 +13,7 @@ import {
   useSubscription,
   useUpdateSubscription,
 } from "@/src/utils/useSubscriptions";
+import OrderPlaceholderSkeleton from "@/src/components/OrderPlaceholderSkeleton";
 
 export default function Orders() {
   const { session } = useAppSelector((state) => state.auth);
@@ -25,7 +26,7 @@ export default function Orders() {
 
   useSubscription();
   if (isLoading) {
-    return <Loading />;
+    return <OrderPlaceholderSkeleton />;
   }
   if (error) {
     return Alert.alert("Order Fetch Error", error.message);

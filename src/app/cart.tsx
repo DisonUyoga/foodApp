@@ -19,6 +19,7 @@ import { useAppDispatch, useAppSelector } from "../utils/hooks";
 import { toast } from "../utils/toast";
 import { clearCart } from "./features/slices/cartSlice";
 import { useGetStripeUser } from "../lib/query";
+import Skeleton from "../components/Skeleton";
 
 const cart = () => {
   const [loading, setLoading] = useState(false);
@@ -48,11 +49,7 @@ const cart = () => {
     return <OrderLoading />;
   }
   if (isLoading || isPending || stripePending) {
-    return (
-      <View className="flex-1 bg-primary items-center justify-center">
-        <ActivityIndicator size={"large"} color="#FF9001" />
-      </View>
-    );
+    return <Skeleton item={cartItems} />;
   }
 
   const handleCreateOrder = () => {
@@ -79,7 +76,7 @@ const cart = () => {
         {
           onSuccess: async (res: any) => {
             setClientSecret(res.client_secret);
-            console.log(res.client_secret);
+            
 
             checkout(res.client_secret, session?.user.email as string, order);
           },
@@ -132,7 +129,7 @@ const cart = () => {
   };
 
   const handleCreateOrderItem = (order: InsertTables<"orders">) => {
-    console.log(order);
+    
     createOrderItem(
       { items: cartItems, order_id: order.id as number },
       {

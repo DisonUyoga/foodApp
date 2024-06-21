@@ -14,6 +14,8 @@ import { Tables } from "@/src/database.types";
 import { useCreateOrderItem, useUpdateOrder } from "@/src/lib/mutate";
 import { toast } from "@/src/utils/toast";
 import { useUpdateSubscription } from "@/src/utils/useSubscriptions";
+import { notifyUserAboutOrder } from "@/src/lib/notification";
+import OrderPlaceholderSkeleton from "@/src/components/OrderPlaceholderSkeleton";
 
 interface OrderDetailProps {
   orderItem: Tables<"order_items">;
@@ -29,17 +31,20 @@ const OrderDetail = () => {
   const { orderId } = useLocalSearchParams()!;
   const { data: order, error, isLoading } = useOrderDetails(orderId as string);
   const { mutate: updateStatus, isPending } = useUpdateOrder();
-  const [selected, setSelected] = useState<OrderStatus | undefined>("New");
+  const [selected, setSelected] = useState<Tables<"orders"> | string>(
+    order?.status ?? "New"
+  );
   useUpdateSubscription(orderId as string);
   if (isLoading) {
-    return <Loading />;
+    return <OrderPlaceholderSkeleton />;
   }
   if (error) {
     return Alert.alert("Error Fetch Order Details", error.message);
   }
 
-  const handleSelected = (status: OrderStatus) => {
+  const handleSelected = async (status: OrderStatus) => {
     setSelected(status);
+    if (!order) return;
 
     updateStatus(
       {
@@ -47,8 +52,9 @@ const OrderDetail = () => {
         id: orderId as string,
       },
       {
-        onSuccess: () => {
+        onSuccess: async (updatedOrder: any) => {
           toast("order status updated", "green");
+          await notifyUserAboutOrder(order, status);
         },
       }
     );
@@ -74,7 +80,7 @@ const OrderDetail = () => {
                     key={s}
                     status={s}
                     handleSelected={handleSelected}
-                    selected={selected}
+                    selected={selected as any}
                   />
                 ))}
               </View>

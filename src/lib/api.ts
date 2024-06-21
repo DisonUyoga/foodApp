@@ -1,15 +1,10 @@
-import { CartItems } from "../app/features/slices/cartSlice";
 
 
 import {
-  CreateType,
   InsertTables,
-  OrderStatus,
   StripeResponse,
-  UpdateTables,
-  UpdateType,
+  UpdateTables
 } from "../type";
-import { useAppSelector } from "../utils/hooks";
 import Request, { RequestParameters } from "./axiosInstance";
 import { supabase } from "./supabase";
 
@@ -35,12 +30,14 @@ export async function getProduct(id: string) {
   return data;
 }
 
-export async function createProduct(data: CreateType) {
+export async function createProduct(data: InsertTables<"products">) {
   const { data: newProduct, error } = await supabase
     .from("products")
     .insert({
       name: data.name,
       price: data.price as number,
+      discount: data.discount,
+      description: data.description,
       image:
         data.image ??
         "https://cdn.pixabay.com/photo/2019/10/14/05/37/pizza-4547868_960_720.png",
@@ -51,15 +48,17 @@ export async function createProduct(data: CreateType) {
   }
   return newProduct;
 }
-export async function updateProduct(data: UpdateType) {
+export async function updateProduct(data: InsertTables<"products">) {
   const { data: updatedProduct, error } = await supabase
     .from("products")
     .update({
       name: data.name,
       price: data.price as number,
       image: data.image,
+      description: data.description,
+      discount: data.discount
     })
-    .eq("id", parseInt(data.id))
+    .eq("id", data.id as number)
     .single();
   if (error) {
     throw new Error(error.message);
@@ -177,3 +176,4 @@ export async function getStripe({url, data, method}:RequestParameters){
 export async function getStripeUser(url:string){
   return (await Request.get<StripeResponse>({url})).data
 }
+
