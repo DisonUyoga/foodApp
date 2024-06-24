@@ -19,7 +19,13 @@ import { Alert } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import Skeleton from "@/src/components/Skeleton";
 import { useState } from "react";
-import Animated, { useSharedValue } from "react-native-reanimated";
+import Animated, {
+  useSharedValue,
+  FadeIn,
+  BounceIn,
+  BounceOutUp,
+  ZoomInEasyDown,
+} from "react-native-reanimated";
 const product = products[0];
 const productOnOffer = products.slice(0, 5);
 
@@ -50,7 +56,11 @@ export default function TabOneScreen() {
     <SafeAreaView className="bg-primary flex-1">
       <Stack.Screen options={{ headerShown: false }} />
       {headerVisible && (
-        <Animated.View className="rounded-xl bg-primary">
+        <Animated.View
+          entering={FadeIn}
+          exiting={BounceOutUp}
+          className="rounded-xl bg-primary"
+        >
           <ImageBackground
             source={icons.admin}
             resizeMode="contain"
@@ -71,13 +81,19 @@ export default function TabOneScreen() {
                 />
               </TouchableOpacity>
 
-              <Text className="text-3xl text-white font-bold">
+              <Animated.Text
+                entering={BounceIn}
+                className="text-3xl text-white font-bold"
+              >
                 PizzaPerk Admin
-              </Text>
+              </Animated.Text>
 
-              <Text className="text-white  opacity-100 line-height-8">
+              <Animated.Text
+                entering={ZoomInEasyDown.delay(50)}
+                className="text-white  opacity-100 line-height-8"
+              >
                 Your Ultimate Pizza Management Solution
-              </Text>
+              </Animated.Text>
             </View>
           </ImageBackground>
         </Animated.View>

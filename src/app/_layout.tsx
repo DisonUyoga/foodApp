@@ -16,11 +16,16 @@ import { LogBox } from "react-native";
 import { RootSiblingParent } from "react-native-root-siblings";
 import { supabase } from "../lib/supabase";
 import { useAppDispatch } from "../utils/hooks";
-import { processingAuth, sessionToken } from "./features/slices/AuthSlice";
+import {
+  processingAuth,
+  sessionToken,
+  setAdmin,
+} from "./features/slices/AuthSlice";
 import QueryProvider from "../lib/QueryProvider";
 import { StatusBar } from "expo-status-bar";
 import { StripeProvider } from "@stripe/stripe-react-native";
 import NotificationProvider from "../components/NotificationProvider";
+import { GestureHandlerRootView } from "react-native-gesture-handler";
 
 export {
   // Catch any errors thrown by the Layout component.
@@ -70,6 +75,14 @@ function RootLayoutNav() {
       try {
         if (data.session?.access_token) {
           store.dispatch(sessionToken({ session: data.session }));
+          const { data: profileData, error } = await supabase
+            .from("profiles")
+            .select("*")
+            .eq("id", data.session.user.id)
+            .single();
+          if (profileData?.group === "ADMIN") {
+            store.dispatch(setAdmin({ isAdmin: true }));
+          }
         } else {
           <Redirect href={"/sign-in"} />;
         }
@@ -88,38 +101,46 @@ function RootLayoutNav() {
     <Provider store={store}>
       <RootSiblingParent>
         <QueryProvider>
-          <NotificationProvider>
-            <StripeProvider
-              publishableKey={
-                process.env.EXPO_PUBLIC_STRIPE_PUBLISHABLE_KEY || ""
-              }
-            >
-              <ThemeProvider
-                value={colorScheme === "dark" ? DarkTheme : DefaultTheme}
+          <GestureHandlerRootView style={{ flex: 1 }}>
+            <NotificationProvider>
+              <StripeProvider
+                publishableKey={
+                  process.env.EXPO_PUBLIC_STRIPE_PUBLISHABLE_KEY || ""
+                }
               >
-                <Stack
-                  screenOptions={{
-                    headerStyle: {
-                      backgroundColor: "#161622",
-                    },
-                    headerTintColor: "#fff",
-                    headerTitleStyle: {
-                      color: "#ffff",
-                      fontWeight: "300",
-                    },
-                  }}
+                <ThemeProvider
+                  value={colorScheme === "dark" ? DarkTheme : DefaultTheme}
                 >
-                  <Stack.Screen name="user" options={{ headerShown: false }} />
-                  <Stack.Screen name="admin" options={{ headerShown: false }} />
-                  <Stack.Screen name="cart" />
-                  <Stack.Screen
-                    name="(auth)"
-                    options={{ headerShown: false }}
-                  />
-                </Stack>
-              </ThemeProvider>
-            </StripeProvider>
-          </NotificationProvider>
+                  <Stack
+                    screenOptions={{
+                      headerStyle: {
+                        backgroundColor: "#161622",
+                      },
+                      headerTintColor: "#fff",
+                      headerTitleStyle: {
+                        color: "#ffff",
+                        fontWeight: "300",
+                      },
+                    }}
+                  >
+                    <Stack.Screen
+                      name="user"
+                      options={{ headerShown: false }}
+                    />
+                    <Stack.Screen
+                      name="admin"
+                      options={{ headerShown: false }}
+                    />
+                    <Stack.Screen name="cart" />
+                    <Stack.Screen
+                      name="(auth)"
+                      options={{ headerShown: false }}
+                    />
+                  </Stack>
+                </ThemeProvider>
+              </StripeProvider>
+            </NotificationProvider>
+          </GestureHandlerRootView>
         </QueryProvider>
       </RootSiblingParent>
       <StatusBar backgroundColor="#161622" style="light" />

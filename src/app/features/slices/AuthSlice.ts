@@ -26,7 +26,7 @@ const initialState: StateProps = {
   session: null,
   authLoading: false,
   profile: null,
-  isAdmin: true,
+  isAdmin: false,
   
 };
 

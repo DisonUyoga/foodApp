@@ -186,3 +186,28 @@ export default PizzaDeliveryNotifications;
 ```
 
 These features and snippets will help you build a comprehensive pizza delivery app, ensuring a smooth and efficient experience for both users and restaurant staff.
+
+
+ if (authLoading) {
+    return <Loading />;
+  }
+  if (!session) {
+    return <Redirect href={"/sign-in"} />;
+  }
+  if (!isAdmin) {
+    return <Redirect href={"/user/menu"} />;
+  }
+
+
+
+  module.exports = {
+  preset: "jest-expo",
+  setupFiles: ["./jest.setup.js"],
+  setupFilesAfterEnv: ["@testing-library/jest-native/extend-expect"],
+  transform: {
+    "^.+\\.[jt]sx?$": "babel-jest",
+  },
+  transformIgnorePatterns: [
+    "node_modules/(?!(jest-)?react-native|@react-native|react-navigation|@react-navigation|@unimodules)",
+  ],
+};

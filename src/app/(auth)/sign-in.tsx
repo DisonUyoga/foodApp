@@ -3,13 +3,13 @@ import { StatusBar } from "expo-status-bar";
 import React from "react";
 import { SafeAreaView } from "react-native-safe-area-context";
 import SigninWithGoogle from "@/src/components/SigninWithGoogleOrMail";
-import { Redirect, Stack } from "expo-router";
+import { Redirect, Stack, router } from "expo-router";
 import { useAppSelector } from "@/src/utils/hooks";
 
 const Signin = () => {
   const { session } = useAppSelector((state) => state.auth);
   if (session) {
-    return <Redirect href={"/"} />;
+    return <Redirect href={"/user"} />;
   }
   return (
     <SafeAreaView className="flex-1 bg-primary items-center justify-center px-4">

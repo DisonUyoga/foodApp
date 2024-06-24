@@ -21,7 +21,7 @@ export default function TabLayout() {
   const colorScheme = useColorScheme();
   const { session } = useAppSelector((state) => state.auth);
   if (!session) {
-    return <Redirect href="/" />;
+    return <Redirect href="/sign-in" />;
   }
 
   return (

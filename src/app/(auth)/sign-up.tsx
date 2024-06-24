@@ -1,10 +1,15 @@
 import { View, Text, SafeAreaView } from "react-native";
 import React from "react";
 import SigninWithGoogle from "@/src/components/SigninWithGoogleOrMail";
-import { Stack } from "expo-router";
+import { Redirect, Stack } from "expo-router";
 import { StatusBar } from "expo-status-bar";
+import { useAppSelector } from "@/src/utils/hooks";
 
 const Signup = () => {
+  const { session } = useAppSelector((state) => state.auth);
+  if (session) {
+    return <Redirect href={"/user"} />;
+  }
   return (
     <SafeAreaView className="flex-1 bg-primary items-center justify-center px-4">
       <Stack.Screen

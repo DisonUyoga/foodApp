@@ -4,9 +4,10 @@ import { SafeAreaView } from "react-native-safe-area-context";
 import Button from "@/src/components/Button";
 import { supabase } from "@/src/lib/supabase";
 import { useAppSelector } from "@/src/utils/hooks";
+import { router } from "expo-router";
 
 const ProfileScreen = () => {
-  const { session } = useAppSelector((state) => state.auth);
+  const { session, isAdmin } = useAppSelector((state) => state.auth);
   return (
     <SafeAreaView className="bg-primary px-4 flex-1 space-y-6">
       <Text className="text-xs text-gray-100 ">{session?.user.email}</Text>
@@ -19,6 +20,17 @@ const ProfileScreen = () => {
           }}
         />
       </TouchableOpacity>
+      {isAdmin && (
+        <TouchableOpacity activeOpacity={0.7}>
+          <Button
+            text="go to admin"
+            otherStyles="w-full bg-secondary text-gray-100 text-center items-center justify-center py-4 rounded"
+            onPress={() => {
+              router.push("/admin/menu?userToAdmin=true");
+            }}
+          />
+        </TouchableOpacity>
+      )}
     </SafeAreaView>
   );
 };

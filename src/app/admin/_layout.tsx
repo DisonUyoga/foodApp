@@ -21,7 +21,7 @@ export default function TabLayout() {
   const colorScheme = useColorScheme();
   const { isAdmin } = useAppSelector((state) => state.auth);
   if (!isAdmin) {
-    return <Redirect href="/" />;
+    return <Redirect href="/user" />;
   }
 
   return (

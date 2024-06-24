@@ -165,6 +165,7 @@ const cart = () => {
               ) : (
                 <View className="w-full  mb-4">
                   <Button
+                  testID="testing checkout press"
                     title="Checkout"
                     color="green"
                     onPress={handleCreateOrder}

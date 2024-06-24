@@ -5,7 +5,7 @@ import Button from "@/src/components/Button";
 import { supabase } from "@/src/lib/supabase";
 import { useAppSelector } from "@/src/utils/hooks";
 import GrowingLoader from "@/src/components/GrowingLoader";
-import { Redirect } from "expo-router";
+import { Link, Redirect, router } from "expo-router";
 
 const ProfileScreen = () => {
   const { session, authLoading } = useAppSelector((state) => state.auth);
@@ -23,12 +23,22 @@ const ProfileScreen = () => {
   return (
     <SafeAreaView className="bg-primary px-4 flex-1 space-y-6">
       <Text className="text-xs text-gray-100 ">{session?.user.email}</Text>
+
       <TouchableOpacity activeOpacity={0.7}>
         <Button
           text="Sign out"
           otherStyles="w-full bg-secondary text-gray-100 text-center items-center justify-center py-4 rounded"
           onPress={() => {
             supabase.auth.signOut();
+          }}
+        />
+      </TouchableOpacity>
+      <TouchableOpacity activeOpacity={0.7}>
+        <Button
+          text="go to user"
+          otherStyles="w-full bg-secondary text-gray-100 text-center items-center justify-center py-4 rounded"
+          onPress={() => {
+            router.push("/user/menu?adminToUser=true");
           }}
         />
       </TouchableOpacity>

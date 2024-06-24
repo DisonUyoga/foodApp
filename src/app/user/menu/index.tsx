@@ -15,7 +15,16 @@ import { Stack, router } from "expo-router";
 import { StatusBar } from "expo-status-bar";
 import { useState } from "react";
 import { Alert } from "react-native";
-import Animated, { useSharedValue } from "react-native-reanimated";
+import Animated, {
+  FadeIn,
+  BounceIn,
+  ZoomInEasyDown,
+  useSharedValue,
+  BounceInLeft,
+  BounceInDown,
+  BounceOutUp,
+  ZoomIn,
+} from "react-native-reanimated";
 import { SafeAreaView } from "react-native-safe-area-context";
 const product = products[0];
 const productOnOffer = products.slice(0, 5);
@@ -49,7 +58,11 @@ export default function TabOneScreen() {
       <Stack.Screen options={{ headerShown: false }} />
 
       {headerVisible && (
-        <Animated.View className="rounded-xl bg-primary">
+        <Animated.View
+          entering={FadeIn}
+          exiting={BounceOutUp}
+          className="rounded-xl bg-primary"
+        >
           <ImageBackground
             source={icons.pizzaperk}
             resizeMode="cover"
@@ -70,22 +83,31 @@ export default function TabOneScreen() {
                 />
               </TouchableOpacity>
               <View className="bg-transparent flex-row items-center w-full gap-x-[80px]">
-                <Text className="text-3xl text-white font-bold">PizzaPerk</Text>
+                <Animated.Text
+                  entering={BounceIn}
+                  className="text-3xl text-white font-bold"
+                >
+                  PizzaPerk
+                </Animated.Text>
                 <TouchableOpacity
                   activeOpacity={0.6}
                   onPress={() => router.push("/location")}
                 >
-                  <Image
+                  <Animated.Image
+                    entering={BounceIn}
                     source={icons.location}
                     resizeMode="contain"
                     className="w-6 h-6"
                   />
                 </TouchableOpacity>
               </View>
-              <Text className="text-white  opacity-100 line-height-8">
+              <Animated.Text
+                entering={ZoomInEasyDown.delay(50)}
+                className="text-white  opacity-100 line-height-8"
+              >
                 "Discover PizzaPerk: Your Crave-Worthy Shortcut to Delicious
                 Pizza Bliss!"
-              </Text>
+              </Animated.Text>
             </View>
           </ImageBackground>
         </Animated.View>
