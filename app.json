@@ -4,11 +4,11 @@
     "slug": "PizzaPerk",
     "version": "1.0.0",
     "orientation": "portrait",
-    "icon": "./assets/images/icon.png",
+    "icon": "./assets/images/admin.png",
     "scheme": "myapp",
     "userInterfaceStyle": "automatic",
     "splash": {
-      "image": "./assets/images/splash.png",
+      "image": "./assets/images/admin.png",
       "resizeMode": "contain",
       "backgroundColor": "#ffffff"
     },
@@ -17,7 +17,7 @@
     },
     "android": {
       "googleServicesFile": "./google-services.json",
-      "package": "PizzaPerk",
+      "package": "com.disonobudho.PizzaPerk",
       "adaptiveIcon": {
         "foregroundImage": "./assets/images/adaptive-icon.png",
         "backgroundColor": "#ffffff"
@@ -43,7 +43,7 @@
         "origin": false
       },
       "eas": {
-        "projectId": "aec7f35e-367e-477b-bd8f-d731c6d9a32b"
+        "projectId": "38e6f5e3-9701-48e4-bba1-9cad3e725f82"
       }
     }
   }
