@@ -5,8 +5,8 @@ module.exports = function (api) {
     presets: ["babel-preset-expo"],
     plugins: [
       "nativewind/babel",
-      "react-native-reanimated/plugin",
       "@babel/plugin-transform-runtime",
+      "react-native-reanimated/plugin",
     ],
   };
 };

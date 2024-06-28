@@ -1,4 +1,4 @@
-import { View, Text } from "react-native";
+import { View, Text, ScrollView } from "react-native";
 import { StatusBar } from "expo-status-bar";
 import React from "react";
 import { SafeAreaView } from "react-native-safe-area-context";
@@ -13,20 +13,22 @@ const Signin = () => {
   }
   return (
     <SafeAreaView className="flex-1 bg-primary items-center justify-center px-4">
-      <Stack.Screen
-        options={{
-          title: "Sign in",
-          headerStyle: {
-            backgroundColor: "#161622",
-          },
-          headerTitleStyle: {
-            color: "#ffff",
-            fontWeight: "300",
-          },
-        }}
-      />
-      <SigninWithGoogle title="Sign in with google" />
-      <StatusBar backgroundColor="#161622" style="light" />
+      <ScrollView className="flex-1">
+        <Stack.Screen
+          options={{
+            title: "Sign in",
+            headerStyle: {
+              backgroundColor: "#161622",
+            },
+            headerTitleStyle: {
+              color: "#ffff",
+              fontWeight: "300",
+            },
+          }}
+        />
+        <SigninWithGoogle title="Sign in with google" />
+        <StatusBar backgroundColor="#161622" style="light" />
+      </ScrollView>
     </SafeAreaView>
   );
 };

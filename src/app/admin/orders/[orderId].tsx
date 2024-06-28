@@ -16,6 +16,7 @@ import { toast } from "@/src/utils/toast";
 import { useUpdateSubscription } from "@/src/utils/useSubscriptions";
 import { notifyUserAboutOrder } from "@/src/lib/notification";
 import OrderPlaceholderSkeleton from "@/src/components/OrderPlaceholderSkeleton";
+import registerNNPushToken from "native-notify";
 
 interface OrderDetailProps {
   orderItem: Tables<"order_items">;
@@ -44,6 +45,7 @@ const OrderDetail = () => {
 
   const handleSelected = async (status: OrderStatus) => {
     setSelected(status);
+
     if (!order) return;
 
     updateStatus(

@@ -26,12 +26,14 @@ import Animated, {
   BounceOutUp,
   ZoomInEasyDown,
 } from "react-native-reanimated";
+import { useSafeAreaInsets } from "react-native-safe-area-context";
 const product = products[0];
 const productOnOffer = products.slice(0, 5);
 
 export default function TabOneScreen() {
   const { data, error, isLoading } = useGetProducts();
   const [headerVisible, setHeaderVisible] = useState(true);
+  const insets = useSafeAreaInsets();
 
   const scrollY = useSharedValue(0);
   const HEADER_HEIGHT = 60;
@@ -56,11 +58,7 @@ export default function TabOneScreen() {
     <SafeAreaView className="bg-primary flex-1">
       <Stack.Screen options={{ headerShown: false }} />
       {headerVisible && (
-        <Animated.View
-          entering={FadeIn}
-          exiting={BounceOutUp}
-          className="rounded-xl bg-primary"
-        >
+        <Animated.View entering={FadeIn} className="rounded-xl bg-primary">
           <ImageBackground
             source={icons.admin}
             resizeMode="contain"
@@ -125,9 +123,9 @@ export default function TabOneScreen() {
           )}
           contentContainerStyle={{
             gap: 10,
-            paddingBottom: 60,
+            paddingBottom: 70,
 
-            marginTop: 30,
+            paddingTop: 30,
             borderRadius: 20,
           }}
           ItemSeparatorComponent={Separator}

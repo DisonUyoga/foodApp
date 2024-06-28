@@ -58,11 +58,7 @@ export default function TabOneScreen() {
       <Stack.Screen options={{ headerShown: false }} />
 
       {headerVisible && (
-        <Animated.View
-          entering={FadeIn}
-          exiting={BounceOutUp}
-          className="rounded-xl bg-primary"
-        >
+        <Animated.View entering={FadeIn} className="rounded-xl bg-primary">
           <ImageBackground
             source={icons.pizzaperk}
             resizeMode="cover"
@@ -132,6 +128,7 @@ export default function TabOneScreen() {
           )}
           contentContainerStyle={{
             gap: 10,
+            paddingBottom: 62,
 
             paddingTop: 30,
             borderRadius: 20,

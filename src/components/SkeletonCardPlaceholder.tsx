@@ -1,6 +1,7 @@
 import { View, Text } from "react-native";
 import React from "react";
 import SkeletonPlaceholder from "expo-react-native-skeleton-placeholder";
+import { ScrollView } from "react-native";
 
 const SkeletonCardPlaceholder = () => {
   return (

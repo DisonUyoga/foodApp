@@ -17,6 +17,7 @@
     },
     "android": {
       "package": "com.disonobudho.PizzaPerk",
+      "googleServicesFile": "./google-services.json",
       "adaptiveIcon": {
         "foregroundImage": "./assets/images/adaptive-icon.png",
         "backgroundColor": "#ffffff"
@@ -26,7 +27,7 @@
       "proxy": "http://localhost:8000",
       "bundler": "metro",
       "output": "static",
-      "favicon": "./assets/images/favicon.png"
+      "favicon": "./assets/images/admin.png"
     },
     "plugins": [
       "expo-router",
@@ -42,7 +43,7 @@
         "origin": false
       },
       "eas": {
-        "projectId": "38e6f5e3-9701-48e4-bba1-9cad3e725f82"
+        "projectId": "6cf35def-887d-4e92-bda0-f7bd1f63e38a"
       }
     }
   }

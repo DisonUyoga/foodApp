@@ -17,6 +17,7 @@ import {
   Button,
   ActivityIndicator,
   Pressable,
+  ScrollView,
 } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { toast } from "../../../utils/toast";
@@ -76,68 +77,70 @@ const ProductDetail = () => {
   }
 
   return (
-    <SafeAreaView className="bg-primary flex-1 px-4 space-y-6">
-      <Stack.Screen
-        options={{
-          title: product ? `${product.name}` : "",
-          headerTintColor: "#fff",
-          headerStyle: {
-            backgroundColor: "#161622",
-          },
-          headerTitleStyle: {
-            color: "#ffff",
-            fontWeight: "300",
-          },
-
-          headerRight: () => (
-            <Link href={`/admin/menu/create/?id=${id}`} asChild>
-              <Pressable>
-                {({ pressed }) => (
-                  <View className="relative">
-                    <FontAwesome
-                      name="pencil"
-                      size={25}
-                      color={"#fff"}
-                      style={{ marginRight: 15, opacity: pressed ? 0.5 : 1 }}
-                    />
-                  </View>
-                )}
-              </Pressable>
-            </Link>
-          ),
-        }}
-      />
-      <View className="bg-transparent w-full">
+    <SafeAreaView className="bg-primary flex-1 px-4 ">
+      <ScrollView className="flex-1 space-y-6">
         <Stack.Screen
           options={{
-            title: product && `${product.name}`,
+            title: product ? `${product.name}` : "",
+            headerTintColor: "#fff",
+            headerStyle: {
+              backgroundColor: "#161622",
+            },
+            headerTitleStyle: {
+              color: "#ffff",
+              fontWeight: "300",
+            },
+
+            headerRight: () => (
+              <Link href={`/admin/menu/create/?id=${id}`} asChild>
+                <Pressable>
+                  {({ pressed }) => (
+                    <View className="relative">
+                      <FontAwesome
+                        name="pencil"
+                        size={25}
+                        color={"#fff"}
+                        style={{ marginRight: 15, opacity: pressed ? 0.5 : 1 }}
+                      />
+                    </View>
+                  )}
+                </Pressable>
+              </Link>
+            ),
           }}
         />
-        <ProductDetailImage
-          fallback={products[0].image}
-          path={product?.image as string}
-        />
-
-        <View className="flex-row w-full bg-transparent items-start justify-between mt-7 mb-7">
-          {sizes.map((item) => (
-            <SelectSize
-              key={item}
-              sizes={item}
-              handleSelected={handleSelected}
-              selected={selected}
-            />
-          ))}
-        </View>
-
-        {product && (
-          <CartDetails
-            price={product.price}
-            quantity={cartItem?.quantity}
-            totalAmount={totalAmount}
-            textStyles="text-gray-100 text-xs font-bold"
+        <View className="bg-transparent w-full">
+          <Stack.Screen
+            options={{
+              title: product && `${product.name}`,
+            }}
           />
-        )}
-      </View>
+          <ProductDetailImage
+            fallback={products[0].image}
+            path={product?.image as string}
+          />
+
+          <View className="flex-row w-full bg-transparent items-start justify-between mt-7 mb-7">
+            {sizes.map((item) => (
+              <SelectSize
+                key={item}
+                sizes={item}
+                handleSelected={handleSelected}
+                selected={selected}
+              />
+            ))}
+          </View>
+
+          {product && (
+            <CartDetails
+              price={product.price}
+              quantity={cartItem?.quantity}
+              totalAmount={totalAmount}
+              textStyles="text-gray-100 text-xs font-bold"
+            />
+          )}
+        </View>
+      </ScrollView>
     </SafeAreaView>
   );
 };

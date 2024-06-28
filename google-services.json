@@ -1,21 +1,21 @@
 {
   "project_info": {
-    "project_number": "836651461506",
-    "project_id": "food-delivery-app-10582",
-    "storage_bucket": "food-delivery-app-10582.appspot.com"
+    "project_number": "770104594117",
+    "project_id": "foodordering-70cc2",
+    "storage_bucket": "foodordering-70cc2.appspot.com"
   },
   "client": [
     {
       "client_info": {
-        "mobilesdk_app_id": "1:836651461506:android:28a21052ad77201831bd9b",
+        "mobilesdk_app_id": "1:770104594117:android:4267293abb5feeddf5eaac",
         "android_client_info": {
-          "package_name": "food.delivery.app"
+          "package_name": "com.disonobudho.PizzaPerk"
         }
       },
       "oauth_client": [],
       "api_key": [
         {
-          "current_key": "AIzaSyBowcEwphQE-gDIqz8Pra3FHkJZfiexyeU"
+          "current_key": "AIzaSyCVqrswF0jYNJi10u5REjTmjTHHihKc4F4"
         }
       ],
       "services": {

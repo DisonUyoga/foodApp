@@ -16,6 +16,7 @@ import {
   View,
   Button,
   ActivityIndicator,
+  ScrollView,
 } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { toast } from "../../../utils/toast";
@@ -74,58 +75,60 @@ const ProductDetail = () => {
   }
 
   return (
-    <SafeAreaView className="bg-primary flex-1 px-4 space-y-6">
-      <View className="bg-transparent w-full">
-        <Stack.Screen
-          options={{
-            title: product && `${product.name}`,
-          }}
-        />
-        <ProductDetailImage
-          fallback={products[0].image}
-          path={product?.image as string}
-        />
-
-        <View className="flex-row w-full bg-transparent items-start justify-between mt-7 mb-7">
-          {sizes.map((item) => (
-            <SelectSize
-              key={item}
-              sizes={item}
-              handleSelected={handleSelected}
-              selected={selected}
-            />
-          ))}
-        </View>
-
-        {product && (
-          <CartDetails
-            price={product.price}
-            quantity={cartItem?.quantity}
-            totalAmount={totalAmount}
-            textStyles="text-gray-100 text-xs font-bold"
+    <SafeAreaView className="bg-primary flex-1 px-4">
+      <ScrollView className="flex-1  space-y-6">
+        <View className="bg-transparent w-full">
+          <Stack.Screen
+            options={{
+              title: product && `${product.name}`,
+            }}
           />
-        )}
+          <ProductDetailImage
+            fallback={products[0].image}
+            path={product?.image as string}
+          />
 
-        {product && (
-          <View className="mt-7">
-            {loading ? (
-              <View className="items-center justify-center bg-transparent">
-                <ActivityIndicator />
-              </View>
-            ) : (
-              <Button
-                title="add to cart"
-                color="#FF9001"
-                disabled={loading}
-                onPress={() => {
-                  setLoading(true);
-                  addProductToCart(product);
-                }}
+          <View className="flex-row w-full bg-transparent items-start justify-between mt-7 mb-7">
+            {sizes.map((item) => (
+              <SelectSize
+                key={item}
+                sizes={item}
+                handleSelected={handleSelected}
+                selected={selected}
               />
-            )}
+            ))}
           </View>
-        )}
-      </View>
+
+          {product && (
+            <CartDetails
+              price={product.price}
+              quantity={cartItem?.quantity}
+              totalAmount={totalAmount}
+              textStyles="text-gray-100 text-xs font-bold"
+            />
+          )}
+
+          {product && (
+            <View className="mt-7 mb-4">
+              {loading ? (
+                <View className="items-center justify-center bg-transparent">
+                  <ActivityIndicator />
+                </View>
+              ) : (
+                <Button
+                  title="add to cart"
+                  color="#FF9001"
+                  disabled={loading}
+                  onPress={() => {
+                    setLoading(true);
+                    addProductToCart(product);
+                  }}
+                />
+              )}
+            </View>
+          )}
+        </View>
+      </ScrollView>
     </SafeAreaView>
   );
 };

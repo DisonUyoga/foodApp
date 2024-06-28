@@ -6,6 +6,9 @@ import Constants from 'expo-constants';
 import { supabase } from './supabase';
 import { Tables } from '../database.types';
 import { OrderStatus } from '../type';
+import registerNNPushToken from 'native-notify';
+import { formatDistanceToNow } from "date-fns";
+import axios from 'axios'
 
 
 
@@ -30,6 +33,22 @@ export async function sendPushNotification(
     },
     body: JSON.stringify(message),
   });
+}
+
+export async function nativeNotify(message: string){
+  const URL="https://cdn.pixabay.com/photo/2016/03/05/09/22/eat-1237432_960_720.png"
+  const baseUrl="https://app.nativenotify.com/api/notification"
+
+  const pushData={
+    appId: 22177,
+    appToken: "w9ZP0AlhSZEZNpR6PoYBDi",
+    title: "PizzaPerk",
+    body: message,
+    dateSent: new Date().getTime(),
+    pushData: { redirectUrl: "/user" },
+    bigPictureURL: URL 
+}
+await axios.post(baseUrl, pushData)
 }
 
 export async function registerForPushNotificationsAsync() {
@@ -85,7 +104,7 @@ export async function notifyUserAboutOrder(order: Tables<"orders">, status: Orde
             message="Your order is cooking"
             break
         case "DELIVERING":
-            message="Your order is being delivered"
+            message="Your order is being delivering"
             break
         case "DELIVERED":
             message="Your order has been delivered successfully. We are grad to serve you!!!"
@@ -93,6 +112,7 @@ export async function notifyUserAboutOrder(order: Tables<"orders">, status: Orde
         default:
             message="Your order has been received it will be ready within an hour"
     }
-
-    sendPushNotification(token as unknown as Notifications.ExpoPushToken, "PizzaPerk", message)
+    
+    await nativeNotify(message)
+    // sendPushNotification(token as unknown as Notifications.ExpoPushToken, "PizzaPerk", message)
 }

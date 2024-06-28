@@ -1,17 +1,17 @@
 import products from "@/assets/data/products";
-import React, { useState, useEffect } from "react";
-import { View, Text, StyleSheet, FlatList } from "react-native";
+import React, { useState } from "react";
+import { ScrollView, StyleSheet } from "react-native";
 import SkeletonCardPlaceholder from "./SkeletonCardPlaceholder";
 
 const Skeleton = ({ item }: any) => {
   const [data, setData] = useState(item || products);
 
   return (
-    <View style={styles.container}>
+    <ScrollView style={styles.container} className="bg-white">
       {data.map((product: any) => (
         <SkeletonCardPlaceholder key={product.id} />
       ))}
-    </View>
+    </ScrollView>
   );
 };
 

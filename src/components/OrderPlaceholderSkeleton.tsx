@@ -1,11 +1,11 @@
-import { View, Text } from "react-native";
+import { View, Text, ScrollView } from "react-native";
 import React from "react";
 import SkeletonPlaceholder from "expo-react-native-skeleton-placeholder";
 import { SafeAreaView } from "react-native-safe-area-context";
 
 const OrderPlaceholderSkeleton = () => {
   return (
-    <SafeAreaView className="flex-1  px-4">
+    <SafeAreaView className="flex-1  px-4 bg-white">
       <SkeletonPlaceholder>
         <SkeletonPlaceholder.Item
           alignItems="center"

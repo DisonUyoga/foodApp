@@ -5,7 +5,7 @@ import { StyleSheet, View } from "react-native";
 
 export default function UpLoading() {
   return (
-    <View style={styles.container}>
+    <View style={styles.container} className="w-full">
       <LottieView
         source={require("../../assets/uploading.json")}
         autoPlay
@@ -23,7 +23,7 @@ const styles = StyleSheet.create({
     alignItems: "center",
   },
   lottie: {
-    width: 200,
-    height: 200,
+    width: "100%",
+    height: "100%",
   },
 });

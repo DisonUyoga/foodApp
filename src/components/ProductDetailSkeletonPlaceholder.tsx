@@ -5,17 +5,16 @@ import { SafeAreaView } from "react-native-safe-area-context";
 
 const ProductDetailSkeletonPlaceholder = () => {
   return (
-    <View className="flex-1 items-center justify-center ">
+    <View className="flex-1 items-center justify-center bg-white">
       <SkeletonPlaceholder>
         <SkeletonPlaceholder.Item
           alignItems="center"
           width={300}
           justifyContent="center"
-          marginTop={20}
         >
           <SkeletonPlaceholder.Item
             width={300}
-            height={300}
+            height={250}
             borderRadius={10}
             marginBottom={20}
           />

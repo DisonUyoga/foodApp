@@ -15,7 +15,7 @@
       "\\.[jt]sx?$": "babel-jest"
     },
     "transformIgnorePatterns": [
-      "/node_modules/(?!((jest-)?react-native|@react-native(-community)?)|expo(nent)?|@expo(nent)?/.*|@expo-google-fonts/.*|react-navigation|@react-navigation/.*|@unimodules/.*|unimodules|sentry-expo|native-base|react-native-svg|expo-router)/"
+      "/node_modules/(?!((jest-)?react-native|@react-native(-community)?)|expo(nent)?|@expo(nent)?/.*|@expo-google-fonts/.*|react-navigation|@react-navigation/.*|@unimodules/.*|unimodules|sentry-expo|native-base|react-native-svg|expo-route|@react-native-async-storage/async-storage)/"
     ]
   },
   "dependencies": {
@@ -67,6 +67,7 @@
     "formik": "^2.4.6",
     "lodash": "^4.17.21",
     "lottie-react-native": "6.7.0",
+    "native-notify": "^4.0.4",
     "nativewind": "^2.0.11",
     "react": "18.2.0",
     "react-data-table-component": "^7.6.2",
@@ -76,7 +77,6 @@
     "react-native-data-table": "^0.2.3",
     "react-native-device-info": "^11.1.0",
     "react-native-elements": "^3.4.3",
-    "react-native-fast-image": "^8.6.3",
     "react-native-gesture-handler": "~2.16.1",
     "react-native-get-random-values": "^1.11.0",
     "react-native-image-slider-box": "^2.0.7",
