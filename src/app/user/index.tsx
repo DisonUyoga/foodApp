@@ -9,7 +9,7 @@ const Page = () => {
   const { session, authLoading, isAdmin } = useAppSelector(
     (state) => state.auth
   );
-  console.log("gguigiuhiugiu");
+  
   if (authLoading) {
     return <Loading />;
   }

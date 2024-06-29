@@ -46,9 +46,11 @@ export async function nativeNotify(message: string){
     body: message,
     dateSent: new Date().getTime(),
     pushData: { redirectUrl: "/user" },
-    bigPictureURL: URL 
+    bigPictureURL: ""
 }
-await axios.post(baseUrl, pushData)
+
+const res = await axios.post(baseUrl, pushData)
+
 }
 
 export async function registerForPushNotificationsAsync() {

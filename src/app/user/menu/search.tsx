@@ -35,8 +35,7 @@ const Search = () => {
 
     setSearchData(data);
   };
-  console.log(countValue);
-  console.log(searchData);
+  
   return (
     <SafeAreaView className="flex-1 bg-gray-50 px-4">
       <View className="px-4 py-2 bg-gray-200 rounded-xl w-full flex-row items-center justify-between">

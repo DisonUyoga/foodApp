@@ -93,7 +93,7 @@ const cart = () => {
     await initializePaymentSheet(client_secret, user);
 
     const pay = await openPaymentSheet();
-    console.log(pay);
+    
     if (!pay) {
       toast("payment not successfull", "red");
       return;
