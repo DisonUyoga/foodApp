@@ -23,7 +23,6 @@ const NotificationProvider = ({ children }: PropsWithChildren) => {
     Notifications.Notification | undefined
   >(undefined);
   registerNNPushToken(22177, "w9ZP0AlhSZEZNpR6PoYBDi");
-  let pushDataObject = getPushDataObject();
 
   const savePushToken = async (token: string | undefined) => {
     if (!token) return;
@@ -45,7 +44,7 @@ const NotificationProvider = ({ children }: PropsWithChildren) => {
 
     responseListener.current =
       Notifications.addNotificationResponseReceivedListener((response) => {});
-    console.log(pushDataObject);
+   
     return () => {
       if (notificationListener.current) {
         notificationListener.current &&
@@ -60,7 +59,7 @@ const NotificationProvider = ({ children }: PropsWithChildren) => {
           );
       }
     };
-  }, [pushDataObject]);
+  }, []);
 
   return <>{children}</>;
 };
