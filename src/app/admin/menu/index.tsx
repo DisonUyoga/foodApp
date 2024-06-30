@@ -27,6 +27,7 @@ import Animated, {
   ZoomInEasyDown,
 } from "react-native-reanimated";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
+import SearchComponent from "@/src/components/SearchComponent";
 const product = products[0];
 const productOnOffer = products.slice(0, 5);
 
@@ -66,18 +67,9 @@ export default function TabOneScreen() {
             imageStyle={styles.imageStyle}
           >
             <View className="bg-transparent absolute left-4 w-full py-4 space-y-2">
-              <TouchableOpacity
-                className="bg-white p-2 rounded-xl max-w-[250px] opacity-50 flex-row justify-between items-center"
-                onPressIn={() => router.push("/admin/menu/search")}
-              >
-                <Text className="font-semibold">What are you looking for?</Text>
-
-                <Image
-                  source={icons.search}
-                  resizeMode="contain"
-                  className="w-6 h-6"
-                />
-              </TouchableOpacity>
+              <View className="bg-transparent">
+                <SearchComponent />
+              </View>
 
               <Animated.Text
                 entering={BounceIn}
