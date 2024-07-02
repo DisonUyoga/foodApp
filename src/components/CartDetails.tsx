@@ -21,7 +21,7 @@ const CartDetails = ({
 }: CartDetailsProps) => {
   return (
     <View
-      className={`flex-row items-center justify-between flex-wrap gap-2 ${containerStyles}`}
+      className={`flex-row items-center justify-between flex-wrap gap-2 px-2 ${containerStyles}`}
     >
       {price && <Badge price={price} />}
       {quantity && (
@@ -31,9 +31,11 @@ const CartDetails = ({
         <Text className={`${textStyles}`}>Cart Total: {totalItems}</Text>
       )}
 
-      <Text className={`${textStyles}`}>
-        Total Cart: {priceTag(totalAmount)}
-      </Text>
+      {totalAmount && (
+        <Text className={`${textStyles}`}>
+          Total Cart: {priceTag(totalAmount)}
+        </Text>
+      )}
     </View>
   );
 };

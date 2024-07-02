@@ -48,7 +48,7 @@ const cart = () => {
   if (loading) {
     return <OrderLoading />;
   }
-  if (isLoading || isPending || stripePending) {
+  if (isLoading) {
     return <Skeleton item={cartItems} />;
   }
 
@@ -76,7 +76,6 @@ const cart = () => {
         {
           onSuccess: async (res: any) => {
             setClientSecret(res.client_secret);
-            
 
             checkout(res.client_secret, session?.user.email as string, order);
           },
@@ -93,7 +92,7 @@ const cart = () => {
     await initializePaymentSheet(client_secret, user);
 
     const pay = await openPaymentSheet();
-    
+
     if (!pay) {
       toast("payment not successfull", "red");
       return;
@@ -129,7 +128,6 @@ const cart = () => {
   };
 
   const handleCreateOrderItem = (order: InsertTables<"orders">) => {
-    
     createOrderItem(
       { items: cartItems, order_id: order.id as number },
       {
@@ -165,7 +163,7 @@ const cart = () => {
               ) : (
                 <View className="w-full  mb-4">
                   <Button
-                  testID="testing checkout press"
+                    testID="testing checkout press"
                     title="Checkout"
                     color="green"
                     onPress={handleCreateOrder}

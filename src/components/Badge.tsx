@@ -10,14 +10,16 @@ interface BadgeProps {
 const Badge = ({ price, otherStyles }: BadgeProps) => {
   return (
     <View>
-      <Text
-        className={`${
-          otherStyles || "bg-secondary rounded"
-        } max-w-[100px]  items-center justify-center text-center px-2`}
-        numberOfLines={1}
-      >
-        {priceTag(price)}
-      </Text>
+      {price && (
+        <Text
+          className={`${
+            otherStyles || "bg-secondary rounded"
+          } max-w-[100px]  items-center justify-center text-center px-2 text-xs font-bold`}
+          numberOfLines={1}
+        >
+          {priceTag(price)}
+        </Text>
+      )}
     </View>
   );
 };

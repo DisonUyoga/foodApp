@@ -1,0 +1,49 @@
+{
+  "expo": {
+    "name": "PizzaPerk",
+    "slug": "PizzaPerk",
+    "version": "1.0.0",
+    "orientation": "portrait",
+    "icon": "./assets/images/admin.png",
+    "scheme": "myapp",
+    "userInterfaceStyle": "automatic",
+    "splash": {
+      "image": "./assets/images/admin.png",
+      "resizeMode": "contain",
+      "backgroundColor": "#ffffff"
+    },
+    "ios": {
+      "supportsTablet": true
+    },
+    "android": {
+      "package": "com.disonobudho.PizzaPerk",
+      "adaptiveIcon": {
+        "foregroundImage": "./assets/images/adaptive-icon.png",
+        "backgroundColor": "#ffffff"
+      }
+    },
+    "web": {
+      "proxy": "http://localhost:8000",
+      "bundler": "metro",
+      "output": "static",
+      "favicon": "./assets/images/admin.png"
+    },
+    "plugins": [
+      "expo-router",
+      "@react-native-google-signin/google-signin",
+      "expo-secure-store"
+    ],
+    "experiments": {
+      "typedRoutes": true,
+      "tsconfigPaths": true
+    },
+    "extra": {
+      "router": {
+        "origin": false
+      },
+      "eas": {
+        "projectId": "2fff5269-05b8-4009-9e21-309d871d6977"
+      }
+    }
+  }
+}
