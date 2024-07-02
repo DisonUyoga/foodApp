@@ -18,12 +18,14 @@ import { Icon } from "react-native-elements";
 import * as Animatable from "react-native-animatable";
 import { router, useSegments } from "expo-router";
 import { supabase } from "../lib/supabase";
+import { FontAwesome } from "@expo/vector-icons";
 
-const SearchComponent = () => {
+const SearchComponent = ({ products }: { products: Tables<"products"> }) => {
   const [data, setData] = useState<any>([]);
   const [modalVisible, setModalVisible] = useState(false);
   const [textInputFossued, setTextInputFossued] = useState(true);
   const textInput = useRef<any>(0);
+
   const segments = useSegments();
 
   const handleSearch = async (query: string) => {
@@ -61,7 +63,7 @@ const SearchComponent = () => {
             <View style={styles.TextInput}>
               <Animatable.View
                 animation={textInputFossued ? "fadeInRight" : "fadeInLeft"}
-                duration={400}
+                duration={200}
               >
                 <Icon
                   name={textInputFossued ? "arrow-back" : "search"}
@@ -91,7 +93,7 @@ const SearchComponent = () => {
 
               <Animatable.View
                 animation={textInputFossued ? "fadeInLeft" : ""}
-                duration={400}
+                duration={200}
               >
                 <Icon
                   name={textInputFossued ? ("cancel" as any) : (null as any)}
@@ -107,7 +109,7 @@ const SearchComponent = () => {
             </View>
           </View>
 
-          {data.length > 0 ? (
+          {data?.length > 0 ? (
             <FlatList
               data={data}
               renderItem={({ item }) => (
@@ -128,7 +130,30 @@ const SearchComponent = () => {
               )}
               keyExtractor={(item: any) => item.id}
             />
-          ) : null}
+          ) : (
+            <FlatList
+              data={products as any}
+              renderItem={({ item }) => (
+                <TouchableOpacity
+                  onPress={() => {
+                    Keyboard.dismiss;
+                    router.push(`/${segments[0]}/menu/${item?.id}`);
+                    setModalVisible(false);
+                    setTextInputFossued(true);
+                  }}
+                >
+                  <Animatable.Text
+                    animation={"zoomIn"}
+                    duration={400}
+                    delay={100}
+                    className="text-gray-600 px-2 py-2"
+                  >
+                    {item.name}
+                  </Animatable.Text>
+                </TouchableOpacity>
+              )}
+            />
+          )}
         </View>
       </Modal>
     </View>

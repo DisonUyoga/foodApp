@@ -1,6 +1,7 @@
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { CreateType, InsertTables, UpdateTables, UpdateType } from "../type";
 import {
+  createDelivery,
   createOrder,
   createOrderItem,
   createProduct,
@@ -21,6 +22,18 @@ export function useCreateProduct() {
     mutationFn: (data: InsertTables<"products">) => createProduct(data),
     onSuccess: async () => {
       await queryClient.invalidateQueries({ queryKey: ["products"] });
+    },
+    onError: (error) => {
+      store.dispatch(globalError({ error: error.message }));
+    },
+  });
+}
+export function useCreateDelivery() {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: (delivery: InsertTables<"delivery">) => createDelivery(delivery),
+    onSuccess: async () => {
+      await queryClient.invalidateQueries({ queryKey: ["delivery"] });
     },
     onError: (error) => {
       store.dispatch(globalError({ error: error.message }));

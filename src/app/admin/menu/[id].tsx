@@ -130,15 +130,6 @@ const ProductDetail = () => {
               />
             ))}
           </View>
-
-          {product && (
-            <CartDetails
-              price={product.price}
-              quantity={cartItem?.quantity}
-              totalAmount={totalAmount}
-              textStyles="text-gray-100 text-xs font-bold"
-            />
-          )}
         </View>
       </ScrollView>
     </SafeAreaView>

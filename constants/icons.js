@@ -18,6 +18,7 @@ import location from "../assets/icons/location.png";
 import notfound from "../assets/icons/notfound.png";
 import admin from "../assets/icons/admin.png";
 import addItem from "../assets/icons/add-item.png";
+import delivery from "../assets/icons/delivery.png";
 
 export default {
   play,
@@ -40,4 +41,5 @@ export default {
   notfound,
   admin,
   addItem,
+  delivery,
 };

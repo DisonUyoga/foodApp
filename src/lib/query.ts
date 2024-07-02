@@ -1,6 +1,8 @@
 import { useQuery } from "@tanstack/react-query";
 import {
   getAdminOrders,
+  getCategories,
+  getDelivery,
   getOrder,
   getOrderItem,
   getOrders,
@@ -13,6 +15,14 @@ export function useGetProducts() {
   const { data, error, isLoading } = useQuery({
     queryKey: ["products"],
     queryFn: () => getProducts(),
+  });
+
+  return { data, isLoading, error };
+}
+export function useGetCategories() {
+  const { data, error, isLoading } = useQuery({
+    queryKey: ["categories"],
+    queryFn: () => getCategories(),
   });
 
   return { data, isLoading, error };
@@ -52,4 +62,13 @@ export function useGetStripeUser(url: string) {
     queryKey: ["stripe_user"],
     queryFn: () => getStripeUser(url),
   });
+}
+
+export function useGetDelivery() {
+  const { data, error, isLoading } = useQuery({
+    queryKey: ["delivery"],
+    queryFn: () => getDelivery(),
+  });
+
+  return { data, isLoading, error };
 }

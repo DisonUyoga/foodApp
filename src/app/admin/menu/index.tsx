@@ -10,44 +10,27 @@ import {
 import products from "@/assets/data/products";
 import ProductCard from "@/components/ProductCard";
 import icons from "@/constants/icons";
-import Loading from "@/src/components/Loading";
-import { Text, View } from "@/src/components/Themed";
-import { useGetProducts } from "@/src/lib/query";
-import { Link, Stack, router } from "expo-router";
-import { StatusBar } from "expo-status-bar";
-import { Alert } from "react-native";
-import { SafeAreaView } from "react-native-safe-area-context";
+import SearchComponent from "@/src/components/SearchComponent";
 import Skeleton from "@/src/components/Skeleton";
-import { useState } from "react";
+import { Text, View } from "@/src/components/Themed";
+import { useGetDelivery, useGetProducts } from "@/src/lib/query";
+import { Link, Stack } from "expo-router";
+import { Alert } from "react-native";
 import Animated, {
-  useSharedValue,
-  FadeIn,
   BounceIn,
-  BounceOutUp,
+  FadeIn,
   ZoomInEasyDown,
 } from "react-native-reanimated";
-import { useSafeAreaInsets } from "react-native-safe-area-context";
-import SearchComponent from "@/src/components/SearchComponent";
+import { SafeAreaView } from "react-native-safe-area-context";
+import FreeDelivery from "@/src/components/FreeDelivery";
+import { useState } from "react";
 const product = products[0];
 const productOnOffer = products.slice(0, 5);
 
 export default function TabOneScreen() {
   const { data, error, isLoading } = useGetProducts();
-  const [headerVisible, setHeaderVisible] = useState(true);
-  const insets = useSafeAreaInsets();
 
-  const scrollY = useSharedValue(0);
-  const HEADER_HEIGHT = 60;
-  const toggleHeader = (event: {
-    nativeEvent: { contentOffset: { y: any } };
-  }) => {
-    const scrollPosition = event.nativeEvent.contentOffset.y;
-    if (scrollPosition > HEADER_HEIGHT && headerVisible) {
-      setHeaderVisible(false);
-    } else if (scrollPosition <= HEADER_HEIGHT && !headerVisible) {
-      setHeaderVisible(true);
-    }
-  };
+  const [visible, setVisible] = useState(false);
 
   if (isLoading) {
     return <Skeleton />;
@@ -55,74 +38,102 @@ export default function TabOneScreen() {
   if (error) {
     return Alert.alert("Fetch Error", error.message);
   }
+  function toggleModal() {
+    setVisible(!visible);
+  }
+
   return (
     <SafeAreaView className="bg-primary flex-1">
       <Stack.Screen options={{ headerShown: false }} />
-      {headerVisible && (
-        <Animated.View entering={FadeIn} className="rounded-xl bg-primary">
-          <ImageBackground
-            source={icons.admin}
-            resizeMode="contain"
-            className="w-full h-48"
-            imageStyle={styles.imageStyle}
-          >
-            <View className="bg-transparent absolute left-4 w-full py-4 space-y-2">
-              <View className="bg-transparent">
-                <SearchComponent />
-              </View>
 
-              <Animated.Text
-                entering={BounceIn}
-                className="text-3xl text-white font-bold"
-              >
-                PizzaPerk Admin
-              </Animated.Text>
-
-              <Animated.Text
-                entering={ZoomInEasyDown.delay(50)}
-                className="text-white  opacity-100 line-height-8"
-              >
-                Your Ultimate Pizza Management Solution
-              </Animated.Text>
-            </View>
-          </ImageBackground>
-        </Animated.View>
-      )}
-      <Pressable className=" bg-primary  px-4  w-full relative">
-        {headerVisible && (
-          <Link href={"/admin/menu/create"} asChild>
-            <TouchableOpacity
-              activeOpacity={0.6}
-              className="space-y-4 justify-center"
-            >
-              <Image
-                source={icons.addItem}
-                resizeMode="contain"
-                className="w-16 h-16 absolute -top-12 rounded-full z-50"
-              />
-              <Text className="text-gray-100 text-xs">Add Items</Text>
-            </TouchableOpacity>
-          </Link>
-        )}
+      <Pressable className=" bg-primary  w-full">
         <FlatList
           data={data}
           renderItem={({ item }) => (
-            <ProductCard
-              product={item}
-              otherStyles="w-full"
-              containerStyle={`border border-secondary items-center justify-center px-2 flex-1`}
-            />
+            <View className="px-2 bg-transparent">
+              <ProductCard
+                product={item}
+                otherStyles="w-full"
+                containerStyle={`border border-secondary items-center justify-center px-2 flex-1`}
+              />
+            </View>
+          )}
+          ListHeaderComponent={() => (
+            <Animated.View
+              entering={FadeIn}
+              className="rounded-xl bg-primary relative"
+            >
+              <ImageBackground
+                source={icons.admin}
+                resizeMode="contain"
+                className="w-full h-48"
+                imageStyle={styles.imageStyle}
+              >
+                <View className="bg-transparent absolute left-4 w-full py-4 space-y-2">
+                  <View className="bg-transparent">
+                    <SearchComponent products={data as any} />
+                  </View>
+
+                  <Animated.Text
+                    entering={BounceIn}
+                    className="text-3xl text-white font-bold"
+                  >
+                    PizzaPerk Admin
+                  </Animated.Text>
+
+                  <Animated.Text
+                    entering={ZoomInEasyDown.delay(50)}
+                    className="text-white  opacity-100 line-height-8"
+                  >
+                    Your Ultimate App Management Solution
+                  </Animated.Text>
+                </View>
+              </ImageBackground>
+              <View className="flex-row items-center justify-between px-2 bg-transparent relative">
+                <Link href={"/admin/menu/create"} asChild>
+                  <TouchableOpacity
+                    activeOpacity={0.6}
+                    className=" justify-center items-center"
+                  >
+                    <Image
+                      source={icons.addItem}
+                      resizeMode="contain"
+                      className="w-10 h-10"
+                    />
+                    <Text className="text-gray-100 text-xs px-3">
+                      Add Items
+                    </Text>
+                  </TouchableOpacity>
+                </Link>
+                <TouchableOpacity
+                  activeOpacity={0.6}
+                  className=" justify-center items-center"
+                  onPress={() => toggleModal()}
+                >
+                  <Image
+                    source={icons.delivery}
+                    resizeMode="contain"
+                    className="w-10 h-10"
+                  />
+                  <Text
+                    className="text-gray-100 text-xs px-3"
+                    numberOfLines={2}
+                  >
+                    Free Delivery
+                  </Text>
+                </TouchableOpacity>
+              </View>
+              <FreeDelivery visible={visible} toggleModal={toggleModal} />
+            </Animated.View>
           )}
           contentContainerStyle={{
             gap: 10,
-            paddingBottom: 70,
+            paddingBottom: 10,
 
             paddingTop: 30,
             borderRadius: 20,
           }}
           ItemSeparatorComponent={Separator}
-          onScroll={toggleHeader}
-          scrollEventThrottle={16}
         />
       </Pressable>
     </SafeAreaView>

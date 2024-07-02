@@ -8,6 +8,17 @@ import {
 import Request, { RequestParameters } from "./axiosInstance";
 import { supabase } from "./supabase";
 
+export async function getCategories() {
+  const { data, error } = await supabase
+    .from("categories")
+    .select("*")
+    .order("created_at", { ascending: false });
+  if (error) {
+    throw new Error(error.message);
+  }
+  return data;
+}
+
 export async function getProducts() {
   const { data, error } = await supabase
     .from("products")
@@ -129,6 +140,30 @@ export async function createOrder(order: InsertTables<"orders">) {
   }
 
   return newProduct;
+}
+export async function createDelivery(delivery: InsertTables<"delivery">) {
+  const { data: newProduct, error } = await supabase
+    .from("delivery")
+    .insert(delivery)
+    .select()
+    .single();
+  if (error) {
+    throw new Error(error.message);
+  }
+
+  return newProduct;
+}
+export async function getDelivery() {
+  
+    const { data, error } = await supabase
+      .from("delivery")
+      .select("*")
+      .order("created_at", { ascending: false });
+    if (error) {
+      throw new Error(error.message);
+    }
+    return data;
+  
 }
 
 export async function createOrderItem(

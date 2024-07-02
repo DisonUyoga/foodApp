@@ -45,3 +45,22 @@ export function useUpdateSubscription(id: string) {
     };
   }, []);
 }
+export function useUpdateDeliverySubscription() {
+  const queryClient = useQueryClient();
+  useEffect(() => {
+    const orderSubscription = supabase
+      .channel("custom-insert-channel")
+      .on(
+        "postgres_changes",
+        { event: "INSERT", schema: "public", table: "delivery" },
+        (payload) => {
+          queryClient.invalidateQueries({ queryKey: ["delivery"] });
+          
+        }
+      )
+      .subscribe();
+    return () => {
+      orderSubscription.unsubscribe();
+    };
+  }, []);
+}

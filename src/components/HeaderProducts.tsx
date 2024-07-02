@@ -1,52 +1,138 @@
-import { View, Text, FlatList } from "react-native";
 import React, { useState } from "react";
+import {
+  FlatList,
+  Image,
+  Pressable,
+  StyleSheet,
+  Text,
+  View,
+} from "react-native";
 
-import ProductCard from "./ProductCard";
+import _ from "lodash";
+import Countdown from "react-native-countdown-fixed";
 import { Tables } from "../database.types";
+import { colors } from "../global/styles";
 interface ProductsOnOfferProps {
-  products: Tables<"products">[];
-  title: string;
-  textStyle?: string;
+  categories: Tables<"categories">[];
+  filterDataByCategory: (p: Tables<"products">[], id: number) => void;
+  filteredProducts: Tables<"products">[];
+  finish: boolean;
+  time: number;
+  toggleFinish: () => void;
 }
 
-const Trending = () => {};
-
 const ProductsOnOffer = ({
-  products,
-  title,
-  textStyle,
+  categories,
+  filteredProducts,
+  filterDataByCategory,
+  finish,
+  time,
+  toggleFinish,
 }: ProductsOnOfferProps) => {
   const [animateItemItem, setAnimateItem] = useState<any>();
-
-  const viewableItemsChange = ({ viewableItems }: any) => {
-    if (viewableItems.length > 0) {
-      setAnimateItem(viewableItems[0].key);
-    }
-  };
+  const [indexCheck, setIndexCheck] = useState(0);
 
   return (
-    <>
-      <Text className={`${textStyle}`}>{title}</Text>
-      <FlatList
-        data={products}
-        keyExtractor={(item: any) => item.id}
-        renderItem={({ item }) => (
-          <ProductCard
-            product={item}
-            otherStyles="w-24  p-4"
-            containerStyle="ml-4 px-2 border border-gray-100"
-            animateItem={animateItemItem}
+    <View className="px-2 space-y-2">
+      {finish && time && (
+        <View className="items-center  justify-center gap-2 mt-1">
+          <Text className="text-gray-100 text-center mt-2 text-xs font-bold">
+            Free Delivery Now
+          </Text>
+
+          <Countdown
+            until={time} // 5 minutes in seconds
+            size={10}
+            onFinish={() => toggleFinish()}
+            digitStyle={{ backgroundColor: "#FFF" }}
+            digitTxtStyle={{ color: "#1CC625" }}
+            timeLabelStyle={{ color: "red", fontWeight: "bold" }}
+            separatorStyle={{ color: "#1CC625" }}
+            timeToShow={["H", "M", "S"]}
+            timeLabels={{ h: "HH", m: "MM", s: "SS" }}
           />
+        </View>
+      )}
+
+      <FlatList
+        horizontal={true}
+        showsHorizontalScrollIndicator={false}
+        data={categories}
+        keyExtractor={(item: any) => item.id}
+        extraData={indexCheck}
+        renderItem={({ item, index }) => (
+          <Pressable
+            onPress={() => {
+              setIndexCheck(item.id);
+              filterDataByCategory(filteredProducts, item.id);
+            }}
+          >
+            <View
+              style={
+                indexCheck === item.id
+                  ? { ...styles.smallCardSelected }
+                  : { ...styles.smallCard }
+              }
+            >
+              <Image
+                style={{ height: 60, width: 60, borderRadius: 30 }}
+                source={{ uri: item.image as any }}
+              />
+
+              <View>
+                <Text
+                  style={
+                    indexCheck === item.id
+                      ? { ...styles.smallCardTextSected }
+                      : { ...styles.smallCardText }
+                  }
+                >
+                  {_.truncate(item.category as string, {
+                    separator: " ",
+                    length: 10,
+                  })}
+                </Text>
+              </View>
+            </View>
+          </Pressable>
         )}
-        horizontal
-        onViewableItemsChanged={viewableItemsChange}
-        viewabilityConfig={{
-          itemVisiblePercentThreshold: 70,
-        }}
-        contentOffset={{ x: 170, y: 0 }}
       />
-    </>
+    </View>
   );
 };
 
 export default ProductsOnOffer;
+
+const styles = StyleSheet.create({
+  smallCard: {
+    borderRadius: 30,
+    backgroundColor: colors.grey5,
+    justifyContent: "center",
+    alignItems: "center",
+    padding: 5,
+    width: 80,
+    margin: 10,
+    height: 100,
+  },
+
+  smallCardSelected: {
+    borderRadius: 30,
+    backgroundColor: colors.buttons,
+    justifyContent: "center",
+    alignItems: "center",
+    padding: 5,
+    width: 80,
+    margin: 10,
+    height: 100,
+  },
+
+  smallCardTextSected: {
+    fontWeight: "bold",
+    color: colors.cardbackground,
+  },
+
+  smallCardText: {
+    fontWeight: "bold",
+    color: colors.grey2,
+  },
+});
